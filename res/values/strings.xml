@@ -4,5 +4,7 @@
     <string name="app_name">whattoeat</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="title_activity_restaurunt">RestauruntActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
