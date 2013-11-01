@@ -5,14 +5,34 @@
     tools:context=".MainActivity" >
 
     <Button
-        android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
+         android:id="@+id/optionbtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="62dp"
-        android:onClick="toEatBtOnclick"
-        android:text="吃!" />
+        android:layout_height="wrap_content" 
+         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginRight="21dp"
+        android:text="Option" />
+
+       
+
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+        </HorizontalScrollView>
+
+        <View
+            android:id="@+id/goimg"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/circle" />
+
+       
 
 </RelativeLayout>
