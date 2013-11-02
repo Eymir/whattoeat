@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
@@ -66,7 +68,21 @@ public class MainActivity extends Activity {
 				MainActivity.this.finish(); 
 			}
 		});
-
+		
+		ImageView test1 = new ImageView(this);
+		ImageView test2 = new ImageView(this);
+		ImageView test3 = new ImageView(this);
+		ImageView test4 = new ImageView(this);
+		test1.setImageResource(R.drawable.test1);
+		test2.setImageResource(R.drawable.test2);
+		test3.setImageResource(R.drawable.test3);
+		test4.setImageResource(R.drawable.test4);
+		LinearLayout tbox = (LinearLayout) findViewById(R.id.historybox);
+		LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		tbox.addView(test1,tp);
+		tbox.addView(test2,tp);
+		tbox.addView(test3,tp);
+		tbox.addView(test4,tp);
 	}
 	
 	
