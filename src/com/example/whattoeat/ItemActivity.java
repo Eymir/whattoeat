@@ -7,14 +7,27 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class ItemActivity extends Activity {
 
 	Button backbtn;
+	View view1;
+	TextView itemTitle;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_item);
+		
+		Bundle bundle = getIntent().getExtras();
+		String title = bundle.getString("title");
+		int img = bundle.getInt("id");
+		
+		view1 = findViewById(R.id.view1);
+		itemTitle = (TextView) findViewById(R.id.itemTitle);
+		
+		view1.setBackgroundResource(img);
+		itemTitle.setText(title);
 		
 		backbtn = (Button) findViewById(R.id.backbtn);
 		backbtn.setOnClickListener(new OnClickListener() {

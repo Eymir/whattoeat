@@ -82,6 +82,53 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, ItemActivity.class);
+				
+				Bundle bundle = new Bundle();
+				bundle.putInt("id", R.drawable.test1);
+				bundle.putString("title", "¤û±Æ");
+				
+				intent.putExtras(bundle);
+				
+				startActivity(intent);
+				MainActivity.this.finish();
+			}
+		});
+		
+		ImageView v2 = (ImageView) findViewById(R.id.iv2);
+		v2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, ItemActivity.class);
+				
+				Bundle bundle = new Bundle();
+				bundle.putInt("id", R.drawable.test2);
+				bundle.putString("title", "Sushi");
+				
+				intent.putExtras(bundle);
+				
+				startActivity(intent);
+				MainActivity.this.finish();
+			}
+		});
+		
+		ImageView v3 = (ImageView) findViewById(R.id.iv3);
+		v3.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, ItemActivity.class);
+				
+				Bundle bundle = new Bundle();
+				bundle.putInt("id", R.drawable.test3);
+				bundle.putString("title", "°s");
+				
+				intent.putExtras(bundle);
+				
 				startActivity(intent);
 				MainActivity.this.finish();
 			}
