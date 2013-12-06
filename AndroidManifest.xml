@@ -26,6 +26,10 @@
             android:name="com.example.whattoeat.RestauruntActivity"
             android:label="@string/title_activity_restaurunt" >
         </activity>
+        <activity
+            android:name="com.example.whattoeat.ItemActivity"
+            android:label="@string/title_activity_item" >
+        </activity>
     </application>
 
 </manifest>
