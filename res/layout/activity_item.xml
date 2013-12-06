@@ -60,6 +60,6 @@
         android:layout_below="@+id/editText1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
-        android:text="飯回" />
+        android:text="返回" />
 
 </RelativeLayout>
