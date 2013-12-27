@@ -95,6 +95,8 @@ public class MainActivity extends Activity {
 			}
 		}
 		cursor.close();
+		
+	
 		//addHist(R.drawable.test1);
 		//addHist(R.drawable.test2);
 		//addHist(R.drawable.test3);
