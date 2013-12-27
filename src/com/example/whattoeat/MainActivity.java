@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
+				
 				intent.setClass(MainActivity.this, RestauruntActivity.class);
 				startActivity(intent); 
 				MainActivity.this.finish(); 
