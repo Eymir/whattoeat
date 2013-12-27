@@ -1,8 +1,23 @@
 package com.example.whattoeat;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -11,13 +26,21 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
+	private static String server_url_load = "http://192.168.1.101/wteRestName.php";
+	JSONParser jsonParser = new JSONParser();
+	JSONArray histmenu = null;
+	SQLiteDatabase db;
+	DBHelper helper = new DBHelper(MainActivity.this);
+	
 	private Button optbtn = null;
 	private View goimg = null;
 	private LinearLayout hbox;
@@ -25,30 +48,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		goimg = super.findViewById(R.id.goimg);
-		hbox = (LinearLayout) super.findViewById(R.id.historybox);
-		
-		optbtn = (Button) super.findViewById(R.id.optionbtn);
-		optbtn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				// add option menu
-			}
-		});
-
-		goimg.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
-			}
-		});
-
-		
+	
 		goimg = super.findViewById(R.id.goimg);
 		
 		optbtn = (Button) super.findViewById(R.id.optionbtn);
@@ -74,124 +74,91 @@ public class MainActivity extends Activity {
 			}
 		});
 		
-		ImageView v1 = (ImageView) findViewById(R.id.iv1);
-		v1.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, ItemActivity.class);
-				
-				Bundle bundle = new Bundle();
-				bundle.putInt("id", R.drawable.test1);
-				bundle.putString("title", "¤û±Æ");
-				
-				intent.putExtras(bundle);
-				
-				startActivity(intent);
-				MainActivity.this.finish();
-			}
-		});
+		db = helper.getReadableDatabase();
 		
-		ImageView v2 = (ImageView) findViewById(R.id.iv2);
-		v2.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, ItemActivity.class);
-				
-				Bundle bundle = new Bundle();
-				bundle.putInt("id", R.drawable.test2);
-				bundle.putString("title", "Sushi");
-				
-				intent.putExtras(bundle);
-				
-				startActivity(intent);
-				MainActivity.this.finish();
+		Cursor cursor = db.rawQuery("select * from history", null);
+		int rowsNum = cursor.getCount();
+		int item,title,rating,rest;
+		String photo;
+
+		if (rowsNum != 0) {
+			cursor.moveToFirst();
+			for (int i = 0; i < rowsNum; i++) {
+				item = cursor.getInt(0);
+				rest = cursor.getInt(2);
+				title = cursor.getInt(3);
+				photo = cursor.getString(4);
+				rating = cursor.getInt(5);
+				addHist(item,rest,title,photo,rating);
+				cursor.moveToNext();
 			}
-		});
-		
-		ImageView v3 = (ImageView) findViewById(R.id.iv3);
-		v3.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, ItemActivity.class);
-				
-				Bundle bundle = new Bundle();
-				bundle.putInt("id", R.drawable.test3);
-				bundle.putString("title", "°s");
-				
-				intent.putExtras(bundle);
-				
-				startActivity(intent);
-				MainActivity.this.finish();
-			}
-		});
-		/*ImageView test1 = new ImageView(this);
-		ImageView test2 = new ImageView(this);
-		ImageView test3 = new ImageView(this);
-		ImageView test4 = new ImageView(this);
-		test1.setImageResource(R.drawable.test1);
-		test2.setImageResource(R.drawable.test2);
-		test3.setImageResource(R.drawable.test3);
-		test4.setImageResource(R.drawable.test4);
-		test1.setPadding(2, 0, 2, 0);
-		test2.setPadding(2, 0, 2, 0);
-		test3.setPadding(2, 0, 2, 0);
-		test4.setPadding(2, 0, 2, 0);
-		
-		LinearLayout tbox = (LinearLayout) findViewById(R.id.historybox);
-		LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.MATCH_PARENT);
-		tbox.addView(test1,tp);
-		tbox.addView(test2,tp);
-		tbox.addView(test3,tp);
-		tbox.addView(test4,tp);*/
-		addHist(R.drawable.test1);
-		addHist(R.drawable.test2);
-		addHist(R.drawable.test3);
-		addHist(R.drawable.test4);
+		}
+		cursor.close();
+		//addHist(R.drawable.test1);
+		//addHist(R.drawable.test2);
+		//addHist(R.drawable.test3);
+		//addHist(R.drawable.test4);
 	}
 	
-	public void addHist(int item)
+	public void addHist(int item, int rest, int title, String photo, int rating)
 	{
-//		RatingBar rbar = new RatingBar(getApplicationContext(),null,android.R.attr.ratingBarStyleSmall);
-//		LinearLayout nll = new LinearLayout(getApplicationContext());
-//		//LinearLayout nlrb = new LinearLayout(getApplicationContext());
-//		RelativeLayout rll = new RelativeLayout(getApplicationContext());
-//		ImageView nh = new ImageView(getApplicationContext());
-//		nll.setOrientation(LinearLayout.VERTICAL);
-//		nh.setImageResource(item);
-//		nh.setPadding(1, 0, 1, 0);
-//		rbar.setRating(5);
-//		//RelativeLayout.LayoutParams imgparam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT-10);
-//		RelativeLayout.LayoutParams rbparam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//		rbparam.addRule(RelativeLayout.ALIGN_BOTTOM);
-//		LinearLayout.LayoutParams tpbig = new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.MATCH_PARENT);
-//		hbox.addView(rll,tpbig);
-//		LinearLayout.LayoutParams tpiv = new LinearLayout.LayoutParams(300,40);
-//		LinearLayout.LayoutParams tprb = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//		
-//		LinearLayout.LayoutParams tpsmall = new LinearLayout.LayoutParams(300, 20);
-//		//hbox.setGravity(Gravity.TOP);
-//		//nll.setGravity(Gravity.TOP);
-//		//hbox.addView(nll, tpbig);
-//		
-//		//hbox.addView(nlrb, tpsmall);
-//		//nll.addView(rbar, tprb);
-//		nll.addView(nh, tpiv);
-//		//rll.setGravity(Gravity.CENTER);
-//		
-//		//rbparam.addRule(RelativeLayout.BELOW);
-//		rll.addView(nll,rbparam);
-//		rll.addView(rbar,rbparam);
-		//rll.addView(nh,imgparam);
+		RatingBar rbar = new RatingBar(getApplicationContext(),null,android.R.attr.ratingBarStyleSmall);
+		RelativeLayout rll = new RelativeLayout(getApplicationContext());
+		TextView tv = new TextView(getApplicationContext());
+		ImageView nh = new ImageView(getApplicationContext());
+		if (photo.equals("")) {
+			
+		} else {
+			File imgFile = new File(photo);
+			if(imgFile.exists()) {
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			    nh.setImageBitmap(myBitmap);
+			    nh.setPadding(1, 0, 1, 0);
+			} else {
+				
+			}
+		}
+		// query from server (photo, title)
+		LoadFromServer query = new LoadFromServer();
+		query.setParams(rest);
+		query.setTV(tv);
+		query.execute();
+		//final int itemid = item;
+		final String photolocation = photo;
+		final int restaurant = rest;
+		//nh.setImageResource(item);
 		
+		rbar.setRating(rating);
+		RelativeLayout.LayoutParams imgparam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT-10);
+		RelativeLayout.LayoutParams rbparam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+		LinearLayout.LayoutParams tpbig = new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.MATCH_PARENT);
+		hbox.addView(rll,tpbig);
+		
+		rbparam.addRule(RelativeLayout.BELOW);
+		rll.setBackgroundResource(R.drawable.border);
+		rll.addView(nh,imgparam);
+		rll.addView(tv);
+		rll.addView(rbar,rbparam);
+		
+		nh.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, ItemActivity.class);
+				
+				Bundle bundle = new Bundle();
+				bundle.putString("photo", photolocation);
+				bundle.putInt("restaurant", restaurant);
+				
+				intent.putExtras(bundle);
+				
+				startActivity(intent);
+				//MainActivity.this.finish();
+			}
+		});
 		return;
 	}
 
@@ -202,5 +169,41 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
 
+	class LoadFromServer extends AsyncTask<String, String, String> {
+		private int restaurant;
+		private String name;
+		private TextView target;
+		public void setParams(int r) {
+			restaurant = r;
+		}
+		
+		public void setTV(TextView tgt) {
+			target = tgt;
+		}
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("restaurant", Integer.toString(restaurant)));
+			JSONObject json = jsonParser.makeHttpRequest(server_url_load,
+                    "POST", params);
+			
+			try {
+				 int success = json.getInt("success");
+				 if (success == 1) {
+					 //histmenu = json.getJSONArray("restaurant");
+					 name = json.getString("restaurant");
+					 target.setText(name);
+				 }
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+	}
 }
