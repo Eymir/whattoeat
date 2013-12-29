@@ -30,6 +30,10 @@
             android:name="com.example.whattoeat.ItemActivity"
             android:label="@string/title_activity_item" >
         </activity>
+        <activity
+            android:name="com.example.whattoeat.PagerActivity"
+            android:label="@string/title_activity_pager" >
+        </activity>
     </application>
 
 </manifest>
