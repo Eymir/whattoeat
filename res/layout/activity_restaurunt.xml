@@ -44,59 +44,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/titleTV"
-            android:src="@drawable/xm" />
+             />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/commentTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/infoTV"
-        android:layout_alignBottom="@+id/infoTV"
-        android:background="@drawable/border"
-        android:text="Comment"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/infoTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/mapTV"
-        android:layout_alignBottom="@+id/mapTV"
-        android:background="@drawable/border"
-        android:text="Info"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/mapTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/menuTV"
-        android:layout_alignBottom="@+id/menuTV"
-        android:background="@drawable/border"
-        android:text="Map"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/menuTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/RelativeLayout2"
-        android:layout_below="@+id/RelativeLayout2"
-        android:layout_marginLeft="23dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/border"
-        android:text="Menu"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/backTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/border"
-        android:text="Not a good one, restart!" />
+    
 
 </RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+	<TextView
+        android:id="@+id/infoTV"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/border_no_right"
+        android:text="Info"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+     
+	<TextView
+        android:id="@+id/menuTV"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/infoTV"
+        android:layout_toRightOf="@+id/infoTV"
+        android:background="@drawable/border_no_right"
+        android:text="Menu"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+    <TextView
+        android:id="@+id/mapTV"
+       	android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/menuTV"
+        android:layout_toRightOf="@+id/menuTV"
+        android:background="@drawable/border_no_right"
+        android:text="Map"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+
+	
+     <TextView
+        android:id="@+id/commentTV"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/mapTV"
+        android:layout_toRightOf="@+id/mapTV"
+        android:background="@drawable/border_no_right"
+        android:text="Comment"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+
+    
+
+    <TextView
+        android:id="@+id/backTV"
+        android:layout_width="170dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/border"
+        android:text="Not a good one, restart!" />
+    
+<android.support.v4.view.ViewPager
+    android:id="@+id/viewpagerLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="205dp"
+    android:layout_above="@+id/backTV"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/menuTV"
+    android:layout_weight="0.44" >
+
+</android.support.v4.view.ViewPager>
+
+</RelativeLayout>
