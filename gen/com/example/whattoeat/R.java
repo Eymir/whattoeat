@@ -22,15 +22,14 @@ public final class R {
     }
     public static final class drawable {
         public static final int border=0x7f020000;
-        public static final int border_no_right=0x7f020001;
-        public static final int border_only_botton=0x7f020002;
-        public static final int circle=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int test1=0x7f020005;
-        public static final int test2=0x7f020006;
-        public static final int test3=0x7f020007;
-        public static final int test4=0x7f020008;
-        public static final int zps904c3ec2=0x7f020009;
+        public static final int border_only_botton=0x7f020001;
+        public static final int circle=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
+        public static final int test1=0x7f020004;
+        public static final int test2=0x7f020005;
+        public static final int test3=0x7f020006;
+        public static final int test4=0x7f020007;
+        public static final int zps904c3ec2=0x7f020008;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f08000a;
@@ -43,7 +42,6 @@ public final class R {
         public static final int goimg=0x7f080009;
         public static final int historybox=0x7f080008;
         public static final int horizontalScrollView1=0x7f080007;
-        public static final int imageView1=0x7f08000c;
         public static final int infoTV=0x7f08000f;
         public static final int itemTitle=0x7f080000;
         public static final int mapTV=0x7f080011;
@@ -52,6 +50,7 @@ public final class R {
         public static final int newPhotobtn=0x7f080001;
         public static final int optionbtn=0x7f080006;
         public static final int ratingBar1=0x7f080003;
+        public static final int restaurantImgView=0x7f08000c;
         public static final int textView1=0x7f08000e;
         public static final int titleTV=0x7f08000d;
         public static final int view1=0x7f080002;

@@ -12,7 +12,7 @@
         android:gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:background="@drawable/border_no_right"
+        android:background="@drawable/border_only_botton"
         android:text="Info"
         android:textAppearance="?android:attr/textAppearanceMedium" />
      
@@ -23,7 +23,7 @@
         android:gravity="center"
         android:layout_alignBottom="@+id/infoTV"
         android:layout_toRightOf="@+id/infoTV"
-        android:background="@drawable/border_no_right"
+        android:background="@drawable/border_only_botton"
         android:text="Menu"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 	
@@ -34,7 +34,7 @@
         android:gravity="center"
         android:layout_alignBottom="@+id/menuTV"
         android:layout_toRightOf="@+id/menuTV"
-        android:background="@drawable/border_no_right"
+        android:background="@drawable/border_only_botton"
         android:text="Map"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 	
@@ -47,7 +47,7 @@
         android:gravity="center"
         android:layout_alignBottom="@+id/mapTV"
         android:layout_toRightOf="@+id/mapTV"
-        android:background="@drawable/border_no_right"
+        android:background="@drawable/border_only_botton"
         android:text="Comment"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

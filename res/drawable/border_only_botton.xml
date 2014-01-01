@@ -4,6 +4,7 @@
 
 <item android:top="-3dp" android:right="-3dp" android:left="-3dp">
     <shape>
+        <solid android:color="@android:color/transparent" />
         <stroke
             android:width="2dp"
             android:color="#ff9801" />

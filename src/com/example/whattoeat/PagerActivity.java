@@ -1,12 +1,38 @@
 package com.example.whattoeat;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.Menu;
 
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+
+
+
+
+
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -15,8 +41,10 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 public class PagerActivity extends Activity {
 	private ViewPager myViewPager;
 
@@ -24,25 +52,34 @@ public class PagerActivity extends Activity {
 	
 	private LayoutInflater mInflater;
 	private List<View> mListViews;
+	private View infoLayout = null;
 	private View layout1 = null;
 	private View layout2 = null;
 	private View layout3 = null;
+	private String imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_pager);
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager_layout);
 		
-
+		
 		
         
+        
+        
+        
+        
+		/**set pager**/
         mListViews = new ArrayList<View>();
         mInflater = getLayoutInflater();
+        infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
         layout1 = mInflater.inflate(R.layout.layout1, null);
         layout2 = mInflater.inflate(R.layout.layout2, null);
         layout3 = mInflater.inflate(R.layout.layout3, null);
        
+        mListViews.add(infoLayout);
         mListViews.add(layout1);
         mListViews.add(layout2);
         mListViews.add(layout3);
@@ -66,14 +103,13 @@ public class PagerActivity extends Activity {
 				Log.d("k", "onPageSelected - " + arg0);
 				
 				TextView tv = (TextView)findViewById(R.id.infoTV);
-				tv.setBackgroundColor(Color.WHITE);
+				tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_only_botton));
 				tv = (TextView)findViewById(R.id.menuTV);
-				tv.setBackgroundColor(Color.WHITE);
+				tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_only_botton));
 				tv = (TextView)findViewById(R.id.mapTV);
-				tv.setBackgroundColor(Color.WHITE);
+				tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_only_botton));
 				tv = (TextView)findViewById(R.id.commentTV);
-				tv.setBackgroundColor(Color.WHITE);
-				
+				tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_only_botton));
 				
 				if(arg0 == 0)
 				{
@@ -101,6 +137,10 @@ public class PagerActivity extends Activity {
 				editText.setText("???¸m#"+arg0+"edittext±±¥óªº­È");*/
 			}
 			
+			
+			
+			
+			
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 				Log.d("k", "onPageScrolled - " + arg0);
@@ -127,6 +167,22 @@ public class PagerActivity extends Activity {
 
 			}
 		});
+		
+		
+        /**
+		 * set restaurant image in activity_restaurant
+		 * **/
+        
+        ImageView myImageView = (ImageView) infoLayout.findViewById(R.id.restaurantImgView);
+        // myImageView.setImageResource(R.drawable.test1);
+	    UrlImageViewHelper.setUrlDrawable(myImageView, imageFileURL);
+		
+        
+        
+       
+
+
+        
 	}
 	private class MyPagerAdapter extends PagerAdapter{
 
@@ -136,6 +192,9 @@ public class PagerActivity extends Activity {
 			((ViewPager) arg0).removeView(mListViews.get(arg1));
 		}
 
+		
+		
+		
 		@Override
 		public void finishUpdate(View arg0) {
 			Log.d("k", "finishUpdate");
@@ -153,7 +212,7 @@ public class PagerActivity extends Activity {
 			((ViewPager) arg0).addView(mListViews.get(arg1),0);
 			return mListViews.get(arg1);
 		}
-
+		
 		@Override
 		public boolean isViewFromObject(View arg0, Object arg1) {
 			Log.d("k", "isViewFromObject");
@@ -184,4 +243,6 @@ public class PagerActivity extends Activity {
 		return true;
 	}
 
+
+	
 }
