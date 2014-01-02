@@ -172,7 +172,6 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-
 	class LoadFromServer extends AsyncTask<String, String, String> {
 		private int restaurant;
 		private String name;
