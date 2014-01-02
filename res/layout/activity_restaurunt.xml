@@ -35,14 +35,14 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             android:text="XM 麻辣鍋"
+            android:textSize="30sp"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageView
             android:id="@+id/restaurantImgView"
-            android:layout_width="120sp"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            
             android:layout_toLeftOf="@+id/titleTV" />
 
     </RelativeLayout>

@@ -36,23 +36,23 @@ public final class R {
     public static final class id {
         public static final int RelativeLayout1=0x7f08000a;
         public static final int RelativeLayout2=0x7f08000b;
-        public static final int action_settings=0x7f080025;
+        public static final int action_settings=0x7f080026;
         public static final int addressLabel=0x7f08000f;
         public static final int addressTV=0x7f080010;
-        public static final int backTV=0x7f080022;
+        public static final int backTV=0x7f080023;
         public static final int backbtn=0x7f080005;
         public static final int closedDaysLabel=0x7f080015;
         public static final int closedDaysTV=0x7f080016;
-        public static final int commentTV=0x7f080021;
+        public static final int commentTV=0x7f080022;
         public static final int editText1=0x7f080004;
         public static final int goimg=0x7f080009;
         public static final int historybox=0x7f080008;
         public static final int horizontalScrollView1=0x7f080007;
-        public static final int infoTV=0x7f08001e;
+        public static final int infoTV=0x7f08001f;
         public static final int itemTitle=0x7f080000;
-        public static final int mapTV=0x7f080020;
-        public static final int menuTV=0x7f08001f;
-        public static final int menu_settings=0x7f080024;
+        public static final int mapTV=0x7f080021;
+        public static final int menuTV=0x7f080020;
+        public static final int menu_settings=0x7f080025;
         public static final int mybrowser=0x7f08001d;
         public static final int newPhotobtn=0x7f080001;
         public static final int openTimeLabel=0x7f080013;
@@ -67,9 +67,10 @@ public final class R {
         public static final int ratingBar1=0x7f080003;
         public static final int restaurantImgView=0x7f08000c;
         public static final int scrollView1=0x7f08000e;
+        public static final int spaceTV=0x7f08001e;
         public static final int titleTV=0x7f08000d;
         public static final int view1=0x7f080002;
-        public static final int viewpagerLayout=0x7f080023;
+        public static final int viewpagerLayout=0x7f080024;
         public static final int webLabel=0x7f080019;
         public static final int webTV=0x7f08001a;
     }

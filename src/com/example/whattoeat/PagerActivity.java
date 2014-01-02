@@ -1,9 +1,13 @@
 package com.example.whattoeat;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.Menu;
 
 import java.util.ArrayList;
@@ -37,8 +41,8 @@ public class PagerActivity extends Activity {
 	private View layout2 = null;
 	private View layout3 = null;
 
-     
-     
+	private String restWeb = null;
+	private String imageFileURL = null;	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -169,14 +173,14 @@ public class PagerActivity extends Activity {
 	
 	private void setRestaurantInfo()
 	{
-		String imageFileURL = null;		// restaurant image url
+										// restaurant image url
 		String restName = null;			// restaurant name
 		String restAddr = null;			// restaurant address
 		String restTel = null;			// restaurant telephone number
 		String restOpen = null;			// restaurant opening time
 		String restClosed = null;		// restaurant closed days
 		String restParking = null;		// restaurant parking places
-		String restWeb = null;			// restaurant web site
+										// restaurant web site 
 		String restPrice = null;		// restaurant price
 		
 		
@@ -186,7 +190,32 @@ public class PagerActivity extends Activity {
         ImageView restIV = (ImageView) infoLayout.findViewById(R.id.restaurantImgView);
 	    UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
 	    
+	    //ImageView image=(ImageView)findViewById(R.id.small_image);
+      
 	    
+	    /*
+	    restIV.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				//Intent ie = new Intent(Intent.ACTION_VIEW,Uri.parse(imageFileURL));
+		        //startActivity(ie);
+				//
+				
+				Intent intent = new Intent();
+				
+				Bundle bundle = new Bundle();
+				bundle.putString("restWeb", imageFileURL);
+				intent.putExtras(bundle);
+				intent.setClass(PagerActivity.this, WebViewActivity.class);
+				startActivity(intent); 
+				//PagerActivity.this.finish(); 
+			}
+		});
+	    */
+	    
+	
 	    
 	    //set restaurant name
 	    restName = "XM麻辣鍋";
@@ -222,13 +251,21 @@ public class PagerActivity extends Activity {
 	    restWeb = "http://www.xm.512g.com";
 	    TextView restWebTV = (TextView) infoLayout.findViewById(R.id.webTV);
 	    restWebTV.setText(restWeb);
-	    
+	    restWebTV.setTextColor(Color.BLUE);
 	    restWebTV.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
+				//Intent ie = new Intent(Intent.ACTION_VIEW,Uri.parse(restWeb));
+		        // startActivity(ie);
+				
+				
 				Intent intent = new Intent();
+				
+				Bundle bundle = new Bundle();
+				bundle.putString("restWeb", restWeb);
+				intent.putExtras(bundle);
 				intent.setClass(PagerActivity.this, WebViewActivity.class);
 				startActivity(intent); 
 				//PagerActivity.this.finish(); 
@@ -241,6 +278,19 @@ public class PagerActivity extends Activity {
 	    restPrice = "平日午餐$239\n平日晚餐及假日全天$259";
 	    TextView restPriceTV = (TextView) infoLayout.findViewById(R.id.priceTV);
 	    restPriceTV.setText(restPrice);
+	    
+	    
+	    //set restart
+	    TextView restartTv = (TextView)this.findViewById(R.id.backTV);
+	    
+	    restartTv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+	
+				
+			}
+		});
 	    
 	}
 	
