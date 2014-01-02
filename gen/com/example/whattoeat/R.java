@@ -22,55 +22,74 @@ public final class R {
     }
     public static final class drawable {
         public static final int border=0x7f020000;
-        public static final int border_only_botton=0x7f020001;
-        public static final int circle=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int test1=0x7f020004;
-        public static final int test2=0x7f020005;
-        public static final int test3=0x7f020006;
-        public static final int test4=0x7f020007;
-        public static final int zps904c3ec2=0x7f020008;
+        public static final int border_corner=0x7f020001;
+        public static final int border_corner2=0x7f020002;
+        public static final int border_only_botton=0x7f020003;
+        public static final int circle=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int test1=0x7f020006;
+        public static final int test2=0x7f020007;
+        public static final int test3=0x7f020008;
+        public static final int test4=0x7f020009;
+        public static final int zps904c3ec2=0x7f02000a;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f08000a;
         public static final int RelativeLayout2=0x7f08000b;
-        public static final int action_settings=0x7f080016;
-        public static final int backTV=0x7f080013;
+        public static final int action_settings=0x7f080025;
+        public static final int addressLabel=0x7f08000f;
+        public static final int addressTV=0x7f080010;
+        public static final int backTV=0x7f080022;
         public static final int backbtn=0x7f080005;
-        public static final int commentTV=0x7f080012;
+        public static final int closedDaysLabel=0x7f080015;
+        public static final int closedDaysTV=0x7f080016;
+        public static final int commentTV=0x7f080021;
         public static final int editText1=0x7f080004;
         public static final int goimg=0x7f080009;
         public static final int historybox=0x7f080008;
         public static final int horizontalScrollView1=0x7f080007;
-        public static final int infoTV=0x7f08000f;
+        public static final int infoTV=0x7f08001e;
         public static final int itemTitle=0x7f080000;
-        public static final int mapTV=0x7f080011;
-        public static final int menuTV=0x7f080010;
-        public static final int menu_settings=0x7f080015;
+        public static final int mapTV=0x7f080020;
+        public static final int menuTV=0x7f08001f;
+        public static final int menu_settings=0x7f080024;
+        public static final int mybrowser=0x7f08001d;
         public static final int newPhotobtn=0x7f080001;
+        public static final int openTimeLabel=0x7f080013;
+        public static final int openTimeTV=0x7f080014;
         public static final int optionbtn=0x7f080006;
+        public static final int parckingLabel=0x7f080017;
+        public static final int parkingTV=0x7f080018;
+        public static final int phoneLabel=0x7f080011;
+        public static final int phoneTV=0x7f080012;
+        public static final int priceLabel=0x7f08001b;
+        public static final int priceTV=0x7f08001c;
         public static final int ratingBar1=0x7f080003;
         public static final int restaurantImgView=0x7f08000c;
-        public static final int textView1=0x7f08000e;
+        public static final int scrollView1=0x7f08000e;
         public static final int titleTV=0x7f08000d;
         public static final int view1=0x7f080002;
-        public static final int viewpagerLayout=0x7f080014;
+        public static final int viewpagerLayout=0x7f080023;
+        public static final int webLabel=0x7f080019;
+        public static final int webTV=0x7f08001a;
     }
     public static final class layout {
         public static final int activity_item=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_pager=0x7f030002;
         public static final int activity_restaurunt=0x7f030003;
-        public static final int layout1=0x7f030004;
-        public static final int layout2=0x7f030005;
-        public static final int layout3=0x7f030006;
-        public static final int viewpager_layout=0x7f030007;
+        public static final int activity_web_view=0x7f030004;
+        public static final int layout1=0x7f030005;
+        public static final int layout2=0x7f030006;
+        public static final int layout3=0x7f030007;
+        public static final int viewpager_layout=0x7f030008;
     }
     public static final class menu {
         public static final int activity_main=0x7f070000;
         public static final int activity_pager=0x7f070001;
         public static final int item=0x7f070002;
         public static final int restaurunt=0x7f070003;
+        public static final int web_view=0x7f070004;
     }
     public static final class string {
         public static final int action_settings=0x7f050004;
@@ -80,6 +99,7 @@ public final class R {
         public static final int title_activity_item=0x7f050005;
         public static final int title_activity_pager=0x7f050006;
         public static final int title_activity_restaurunt=0x7f050003;
+        public static final int title_activity_web_view=0x7f050007;
     }
     public static final class style {
         /** 

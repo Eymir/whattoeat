@@ -42,10 +42,139 @@
             android:layout_width="120sp"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
+            
             android:layout_toLeftOf="@+id/titleTV" />
 
     </RelativeLayout>
 
-    
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignLeft="@+id/RelativeLayout2"
+        android:layout_alignRight="@+id/RelativeLayout2"
+        android:paddingTop="10dip"
+        android:layout_below="@+id/RelativeLayout2" >
+		
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+           
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/addressLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="地址" 
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <TextView
+                android:id="@+id/addressTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/phoneLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:text="電話"            
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/phoneTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/openTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="營業時間"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/openTimeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/closedDaysLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="店休日"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/closedDaysTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/parckingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停車"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/parkingTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/webLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="網站"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+            <TextView
+                android:id="@+id/webTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dip"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+            <TextView
+                android:id="@+id/priceLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="價目表"
+                android:background="@drawable/border_corner"
+                android:textColor = "#FFFFFF"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+            <TextView
+                android:id="@+id/priceTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+            
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

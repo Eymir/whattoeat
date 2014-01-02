@@ -14,7 +14,7 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/border_only_botton"
         android:text="Info"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    	android:textAppearance="?android:attr/textAppearanceLarge"/>
      
 	<TextView
         android:id="@+id/menuTV"
@@ -25,7 +25,7 @@
         android:layout_toRightOf="@+id/infoTV"
         android:background="@drawable/border_only_botton"
         android:text="Menu"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 	
     <TextView
         android:id="@+id/mapTV"
@@ -36,7 +36,7 @@
         android:layout_toRightOf="@+id/menuTV"
         android:background="@drawable/border_only_botton"
         android:text="Map"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 	
 
 	
@@ -49,7 +49,7 @@
         android:layout_toRightOf="@+id/mapTV"
         android:background="@drawable/border_only_botton"
         android:text="Comment"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
 
@@ -57,14 +57,15 @@
 
     <TextView
         android:id="@+id/backTV"
-        android:layout_width="170dp"
-        android:layout_height="30dp"
+        android:layout_width="270dp"
+        android:layout_height="45dp"
         android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/border"
-        android:text="Not a good one, restart!" />
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/border_corner2"
+        android:text="Not a good one, restart!"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
     
 <android.support.v4.view.ViewPager
     android:id="@+id/viewpagerLayout"
