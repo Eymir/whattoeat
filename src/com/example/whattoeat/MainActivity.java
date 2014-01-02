@@ -18,15 +18,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.view.Gravity;
+
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, RestauruntActivity.class);
+				intent.setClass(MainActivity.this, PagerActivity.class);
 				startActivity(intent); 
 				MainActivity.this.finish(); 
 			}
