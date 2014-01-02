@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, PagerActivity.class);
 				startActivity(intent); 
-				MainActivity.this.finish(); 
+				//MainActivity.this.finish(); 
 			}
 		});
 		

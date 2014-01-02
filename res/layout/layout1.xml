@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" android:orientation="vertical">
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:id="@+id/textView1" android:layout_width="fill_parent" android:text="P1"></TextView>
+    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:id="@+id/addressLabel" android:layout_width="fill_parent" android:text="P1"></TextView>
     <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/editText1">
         <requestFocus></requestFocus>
     </EditText>

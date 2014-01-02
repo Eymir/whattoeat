@@ -1,36 +1,13 @@
 package com.example.whattoeat;
 
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.Menu;
 
-
-
-
-
-
-
-
-
-
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
@@ -39,11 +16,14 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class PagerActivity extends Activity {
 	private ViewPager myViewPager;
@@ -56,21 +36,19 @@ public class PagerActivity extends Activity {
 	private View layout1 = null;
 	private View layout2 = null;
 	private View layout3 = null;
-	private String imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
-	
+
+     
+     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager_layout);
 		
+		 
 		
 		
-        
-        
-        
-        
-        
+
 		/**set pager**/
         mListViews = new ArrayList<View>();
         mInflater = getLayoutInflater();
@@ -91,7 +69,7 @@ public class PagerActivity extends Activity {
 		
 		myViewPager.setCurrentItem(0);
 		TextView tv = (TextView)findViewById(R.id.infoTV);
-		tv.setBackgroundColor(Color.parseColor("#ff9801"));
+		tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
 		
        // EditText v2EditText = (EditText)layout2.findViewById(R.id.editText1);
        // v2EditText.setText("???置第二?view的值");
@@ -114,22 +92,26 @@ public class PagerActivity extends Activity {
 				if(arg0 == 0)
 				{
 					tv = (TextView)findViewById(R.id.infoTV);
-					tv.setBackgroundColor(Color.parseColor("#ff9801"));
+					tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
+					//tv.setBackgroundColor(Color.parseColor("#ff9801"));
 				}
 				if(arg0 == 1)
 				{
 					tv = (TextView)findViewById(R.id.menuTV);
-					tv.setBackgroundColor(Color.parseColor("#ff9801"));
+					tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
+					//tv.setBackgroundColor(Color.parseColor("#ff9801"));
 				}
 				if(arg0 == 2)
 				{
 					tv = (TextView)findViewById(R.id.mapTV);
-					tv.setBackgroundColor(Color.parseColor("#ff9801"));
+					tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
+					//tv.setBackgroundColor(Color.parseColor("#ff9801"));
 				}
 				if(arg0 == 3)
 				{
 					tv = (TextView)findViewById(R.id.commentTV);
-					tv.setBackgroundColor(Color.parseColor("#ff9801"));
+					tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
+					//tv.setBackgroundColor(Color.parseColor("#ff9801"));
 				}
 				/*
 				View v = mListViews.get(arg0);
@@ -168,22 +150,101 @@ public class PagerActivity extends Activity {
 			}
 		});
 		
+       
 		
+      
+        
         /**
-		 * set restaurant image in activity_restaurant
+         * set restaurant information in activity_restaurant
 		 * **/
-        
-        ImageView myImageView = (ImageView) infoLayout.findViewById(R.id.restaurantImgView);
-        // myImageView.setImageResource(R.drawable.test1);
-	    UrlImageViewHelper.setUrlDrawable(myImageView, imageFileURL);
-		
-        
+        setRestaurantInfo();
         
        
 
 
         
 	}
+	
+	
+	
+	private void setRestaurantInfo()
+	{
+		String imageFileURL = null;		// restaurant image url
+		String restName = null;			// restaurant name
+		String restAddr = null;			// restaurant address
+		String restTel = null;			// restaurant telephone number
+		String restOpen = null;			// restaurant opening time
+		String restClosed = null;		// restaurant closed days
+		String restParking = null;		// restaurant parking places
+		String restWeb = null;			// restaurant web site
+		String restPrice = null;		// restaurant price
+		
+		
+		
+		//set restaurant image 
+		imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
+        ImageView restIV = (ImageView) infoLayout.findViewById(R.id.restaurantImgView);
+	    UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
+	    
+	    
+	    
+	    //set restaurant name
+	    restName = "XM麻辣鍋";
+	    TextView restNameTV = (TextView) infoLayout.findViewById(R.id.titleTV);
+	    restNameTV.setText(restName);
+	    
+	    //set restaurant address
+	    restAddr = "台南市東區林森路一段167號";
+	    TextView restAddrTV = (TextView) infoLayout.findViewById(R.id.addressTV);
+	    restAddrTV.setText(restAddr);
+		
+	    //set restaurant phone #
+	    restTel = "06-2083775";
+	    TextView restPhoneTV = (TextView) infoLayout.findViewById(R.id.phoneTV);
+	    restPhoneTV.setText(restTel);
+		
+	    //set restaurant opening time
+	    restOpen = "11:00-02:00";
+	    TextView restOpenTV = (TextView) infoLayout.findViewById(R.id.openTimeTV);
+	    restOpenTV.setText(restOpen);
+	    
+	    //set restaurant closed days
+	    restClosed = "無";
+	    TextView restCloseTV = (TextView) infoLayout.findViewById(R.id.closedDaysTV);
+	    restCloseTV.setText(restClosed);
+	    
+	    //set restaurant parking places
+	    restParking = "特約停車場";
+	    TextView restParkingTV = (TextView) infoLayout.findViewById(R.id.parkingTV);
+	    restParkingTV.setText(restParking);
+	    
+	    //set restaurant web site
+	    restWeb = "http://www.xm.512g.com";
+	    TextView restWebTV = (TextView) infoLayout.findViewById(R.id.webTV);
+	    restWebTV.setText(restWeb);
+	    
+	    restWebTV.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Intent intent = new Intent();
+				intent.setClass(PagerActivity.this, WebViewActivity.class);
+				startActivity(intent); 
+				//PagerActivity.this.finish(); 
+			}
+		});
+	    
+	    
+	    
+	    //set restaurant price
+	    restPrice = "平日午餐$239\n平日晚餐及假日全天$259";
+	    TextView restPriceTV = (TextView) infoLayout.findViewById(R.id.priceTV);
+	    restPriceTV.setText(restPrice);
+	    
+	}
+	
+	
 	private class MyPagerAdapter extends PagerAdapter{
 
 		@Override
@@ -242,7 +303,6 @@ public class PagerActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_pager, menu);
 		return true;
 	}
-
 
 	
 }

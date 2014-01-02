@@ -8,6 +8,8 @@
         android:minSdkVersion="9"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -29,6 +31,14 @@
         <activity
             android:name="com.example.whattoeat.ItemActivity"
             android:label="@string/title_activity_item" >
+        </activity>
+        <activity
+            android:name="com.example.whattoeat.PagerActivity"
+            android:label="@string/title_activity_pager" >
+        </activity>
+        <activity
+            android:name="com.example.whattoeat.WebViewActivity"
+            android:label="@string/title_activity_web_view" >
         </activity>
     </application>
 
