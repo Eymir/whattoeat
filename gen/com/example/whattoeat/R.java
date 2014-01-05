@@ -220,10 +220,9 @@ containing a value of this type.
     public static final class id {
         public static final int RelativeLayout1=0x7f050010;
         public static final int RelativeLayout2=0x7f050011;
-        public static final int action_settings=0x7f05002c;
-        public static final int addressLabel=0x7f050015;
+        public static final int action_settings=0x7f05002d;
         public static final int addressTV=0x7f050016;
-        public static final int backTV=0x7f050029;
+        public static final int backTV=0x7f05002a;
         public static final int backbtn=0x7f05000a;
         public static final int closedDaysLabel=0x7f05001b;
         public static final int closedDaysTV=0x7f05001c;
@@ -238,7 +237,7 @@ containing a value of this type.
         public static final int map=0x7f05000f;
         public static final int mapTV=0x7f050027;
         public static final int menuTV=0x7f050026;
-        public static final int menu_settings=0x7f05002b;
+        public static final int menu_settings=0x7f05002c;
         public static final int mybrowser=0x7f050023;
         public static final int newPhotobtn=0x7f050006;
         public static final int none=0x7f050000;
@@ -253,14 +252,16 @@ containing a value of this type.
         public static final int priceLabel=0x7f050021;
         public static final int priceTV=0x7f050022;
         public static final int ratingBar1=0x7f050008;
+        public static final int restartTV=0x7f050029;
         public static final int restaurantImgView=0x7f050012;
         public static final int satellite=0x7f050002;
         public static final int scrollView1=0x7f050014;
         public static final int spaceTV=0x7f050024;
         public static final int terrain=0x7f050003;
+        public static final int textViewP3=0x7f050015;
         public static final int titleTV=0x7f050013;
         public static final int view1=0x7f050007;
-        public static final int viewpagerLayout=0x7f05002a;
+        public static final int viewpagerLayout=0x7f05002b;
         public static final int webLabel=0x7f05001f;
         public static final int webTV=0x7f050020;
     }
