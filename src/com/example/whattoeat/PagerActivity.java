@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.Menu;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +29,15 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
+
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -41,6 +45,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -56,6 +61,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings;
+
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -73,9 +79,10 @@ public class PagerActivity extends Activity implements LocationListener
 	private View mapLayout = null;
 	private View layout3 = null;
 	
-	private Dialog rankDialog = null;
-	private RatingBar ratingBar = null;
 	
+	//server
+	//private String baseUrl = "http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
+	private String baseUrl = "http://192.168.1.101/wteSuggest.php?";
 	
 	//restaurant info 
 	private String imageFileURL = null;		// restaurant image url
@@ -93,7 +100,7 @@ public class PagerActivity extends Activity implements LocationListener
 	
 	//flags
 	private String lastRes = null;
-	private String flag = null;
+	private String flag = "0";
 	
 
 	//google map settings
@@ -116,10 +123,11 @@ public class PagerActivity extends Activity implements LocationListener
 	    Bundle bundle = getIntent().getExtras();
 	    if(bundle != null)
 	    {
-	    	lastRes = bundle.getString("lastRes");
+	    	flag = bundle.getString("flag");
+	    	
 	    	if(bundle.size()>1)
 	    	{
-	    		flag = bundle.getString("flag");
+	    		lastRes = bundle.getString("lastRes");
 	    	}
 	    }
 		
@@ -200,7 +208,10 @@ public class PagerActivity extends Activity implements LocationListener
 					e.printStackTrace();
 				}
 			}
-			String url = "http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?deviceId="+deviceId+"&lat="+latitude+"&lng="+longitude+"&lastRes="+lastRes+"&flag="+flag;
+			
+			latitude = 22.9;
+			longitude = 120.0;
+			String url = baseUrl+"deviceId="+deviceId+"&lat="+latitude+"&lng="+longitude+"&lastRes="+lastRes+"&flag="+flag;
 			//HttpTask a = new HttpTask();
 			//a.execute(url);
 			new HttpTask().execute(url);
@@ -521,7 +532,7 @@ public class PagerActivity extends Activity implements LocationListener
 				Intent intent = new Intent();
 				Bundle bundle = new Bundle();
 				//restName = "XD ¿ß¿ßÁç";
-				bundle.putString("lastRes", restName);
+				bundle.putString("flag", "1");
 				intent.putExtras(bundle);
 				
 				intent.setClass(PagerActivity.this, PagerActivity.class);
@@ -544,7 +555,7 @@ public class PagerActivity extends Activity implements LocationListener
 				
 				//restName = "¿ß¿ßÁç";
 				bundle.putString("lastRes", restName);
-				bundle.putString("flag", "1");
+				bundle.putString("flag", "2");
 				intent.putExtras(bundle);
 				intent.setClass(PagerActivity.this, PagerActivity.class);
 				startActivity(intent); 
@@ -708,6 +719,7 @@ public class PagerActivity extends Activity implements LocationListener
 	        
 	    	TextView tmpTv = (TextView)layout3.findViewById(R.id.textViewP3);
 	    	tmpTv.setText(response);
+	    	/*
 	    	String [] splitInfo = response.split("\t");
 	    	
 	    	restName = splitInfo[0];	// restaurant name
@@ -719,7 +731,7 @@ public class PagerActivity extends Activity implements LocationListener
 	    	restParking = splitInfo[6];		// restaurant parking places
 	    	restWeb = splitInfo[7];	// restaurant web site 
 	    	restPrice = splitInfo[8];		// restaurant price
-	    
+	    */
 
 	    	/**
 	   	 	* set restaurant information in activity_restaurant

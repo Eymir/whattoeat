@@ -21,7 +21,7 @@
 
         <RatingBar
             android:id="@+id/ratingBar1"
-            style="?android:attr/ratingBarStyle"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/restaurantImgView"
