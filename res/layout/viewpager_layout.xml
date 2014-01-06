@@ -5,21 +5,32 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
-	<TextView
-        android:id="@+id/infoTV"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
+    <TextView
+        android:id="@+id/spaceTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
+        android:background="@drawable/border_only_botton"
+        android:text=" "
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+    
+	<TextView
+        android:id="@+id/infoTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/spaceTV"
+        android:layout_toRightOf="@+id/spaceTV"
         android:background="@drawable/border_only_botton"
         android:text="Info"
     	android:textAppearance="?android:attr/textAppearanceLarge"/>
      
 	<TextView
         android:id="@+id/menuTV"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_alignBottom="@+id/infoTV"
         android:layout_toRightOf="@+id/infoTV"
@@ -29,8 +40,8 @@
 	
     <TextView
         android:id="@+id/mapTV"
-       	android:layout_width="70dp"
-        android:layout_height="30dp"
+       	android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_alignBottom="@+id/menuTV"
         android:layout_toRightOf="@+id/menuTV"
@@ -42,8 +53,8 @@
 	
      <TextView
         android:id="@+id/commentTV"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_alignBottom="@+id/mapTV"
         android:layout_toRightOf="@+id/mapTV"
@@ -56,15 +67,29 @@
     
 
     <TextView
-        android:id="@+id/backTV"
-        android:layout_width="270dp"
-        android:layout_height="45dp"
+        android:id="@+id/restartTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+		android:layout_marginLeft="10dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/border_corner2"
-        android:text="Not a good one, restart!"
+        android:text="Restart!"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/backTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_alignBottom="@+id/restartTV"
+        android:background="@drawable/border_corner2"
+        android:text="Last one!"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
 <android.support.v4.view.ViewPager
