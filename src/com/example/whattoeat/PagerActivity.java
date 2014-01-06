@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -55,9 +54,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings;
@@ -75,7 +75,7 @@ public class PagerActivity extends Activity implements LocationListener
 	private LayoutInflater mInflater;
 	private List<View> mListViews;
 	private View infoLayout = null;
-	private View layout1 = null;
+	private View menuLayout = null;
 	private View mapLayout = null;
 	private View layout3 = null;
 	
@@ -85,16 +85,15 @@ public class PagerActivity extends Activity implements LocationListener
 	private String baseUrl = "http://192.168.1.101/wteSuggest.php?";
 	
 	//restaurant info 
-	private String imageFileURL = null;		// restaurant image url
 	private String restName = null;	// restaurant name
+	private String imageFileURL = null;		// restaurant image url
 	private String restAddr = null;	// restaurant address
 	private String restTel = null;			// restaurant telephone number
 	private String restOpen = null;			// restaurant opening time
 	private String restClosed = null;		// restaurant closed days
-	private String restParking = null;		// restaurant parking places
 	private String restWeb = null;	// restaurant web site 
-	private String restPrice = null;		// restaurant price
-	private int rating;
+	private String restDescription = null;		// restaurant price
+	private String restMenu = null;
     private Double resLat;
 	private Double resLng;
 	
@@ -418,12 +417,12 @@ public class PagerActivity extends Activity implements LocationListener
         mListViews = new ArrayList<View>();
         mInflater = getLayoutInflater();
         infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
-        layout1 = mInflater.inflate(R.layout.layout1, null);
+        menuLayout = mInflater.inflate(R.layout.menu_layout, null);
         mapLayout = mInflater.inflate(R.layout.activity_map, null);
         layout3 = mInflater.inflate(R.layout.layout3, null);
        
         mListViews.add(infoLayout);
-        mListViews.add(layout1);
+        mListViews.add(menuLayout);
         mListViews.add(mapLayout);
         mListViews.add(layout3);
         
@@ -605,8 +604,8 @@ public class PagerActivity extends Activity implements LocationListener
 	    
 	    //set restaurant parking places
 	    //restParking = "¯S¬ù°±¨®³õ";
-	    TextView restParkingTV = (TextView) infoLayout.findViewById(R.id.parkingTV);
-	    restParkingTV.setText(restParking);
+	   // TextView restParkingTV = (TextView) infoLayout.findViewById(R.id.parkingTV);
+	   // restParkingTV.setText(restParking);
 	    
 	    //set restaurant web site
 	    //restWeb = "http://www.xm.512g.com";
@@ -638,8 +637,8 @@ public class PagerActivity extends Activity implements LocationListener
 	    
 	    //set restaurant price
 	    //restPrice = "¥­¤é¤ÈÀ\$239\n¥­¤é±ßÀ\¤Î°²¤é¥þ¤Ñ$259";
-	    TextView restPriceTV = (TextView) infoLayout.findViewById(R.id.priceTV);
-	    restPriceTV.setText(restPrice);
+	   // TextView restPriceTV = (TextView) infoLayout.findViewById(R.id.priceTV);
+	   // restPriceTV.setText(restPrice);
     
 	    //set restaurant rating
 	   RatingBar smallRatingBar = (RatingBar) infoLayout.findViewById(R.id.ratingBar1);
@@ -728,11 +727,13 @@ public class PagerActivity extends Activity implements LocationListener
 	    	restTel = splitInfo[3];			// restaurant telephone number
 	    	restOpen = splitInfo[4];			// restaurant opening time
 	    	restClosed = splitInfo[5];		// restaurant closed days
-	    	restParking = splitInfo[6];		// restaurant parking places
-	    	restWeb = splitInfo[7];	// restaurant web site 
-	    	restPrice = splitInfo[8];		// restaurant price
-	    */
-
+	    	restWeb = splitInfo[6];	// restaurant web site 
+	    	restDescription = splitInfo[7];		// restaurant price
+	    	restMenu = splitInfo[8];
+	        resLat = Double.parseDouble(splitInfo[9]);
+	    	resLng = Double.parseDouble(splitInfo[10]);
+*/
+	    	
 	    	/**
 	   	 	* set restaurant information in activity_restaurant
 	   	 	* **/
@@ -743,8 +744,59 @@ public class PagerActivity extends Activity implements LocationListener
 	   		 * **/
 	   		setMap();
 	    	 
+	   		/**
+	   		 * set menu
+	   		 * **/
+	   		setMenu();
 	    }
 
+	    
+	    private void setMenu()
+	    {
+	    	restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
+	    	
+	    	
+	    	String[] splitMenu = restMenu.split(";");
+	    	//TextView tv = (TextView) findViewById(R.id.);
+	    	
+	    	LinearLayout ll = (LinearLayout)findViewById(R.id.menuLayout);
+	    	
+	    	//ll.addview
+	    	
+	    	//restMenu.length()
+	    	for(int i = 0; i < splitMenu.length;i++)
+	    	{
+	    		String[] splitFood = splitMenu[i].split(":");
+	    		String food = splitFood[0];
+	    		String price = splitFood[1];
+		    	//View view = new View(null);
+		    	//view.setc
+	    		View view = View.inflate(PagerActivity.this, R.layout.menu_item_layout, null);
+	    		TextView menuItemName = (TextView) view.findViewById(R.id.menuItemName);
+	    		menuItemName.setText(food);
+	    		TextView menuItemValue = (TextView) view.findViewById(R.id.menuItemPrice);
+	    		menuItemValue.setText("$"+price);
+	    		TextView menuItemPlus = (TextView) view.findViewById(R.id.menuItemPlus);
+	    		menuItemPlus.setOnClickListener(manuPlusMinusListener);
+	    		TextView menuItemMinus = (TextView) view.findViewById(R.id.menuItemMinus);
+	    		menuItemMinus.setOnClickListener(manuPlusMinusListener);
+	    		
+	    		
+	    		
+	    		ll.addView(view);
+	    		
+	    		//View.inflate(this, R.layout.menu_item_layout, null);
+	    		
+	    	}
+	    	
+	    	
+	    }
+	    
+	    
+	    
+	    
+	    
+	    
 	    @Override
 	    protected void onPreExecute() {
 	        // TODO Auto-generated method stub
@@ -847,6 +899,59 @@ public class PagerActivity extends Activity implements LocationListener
         	
         	
         	
+        }
+    };
+    
+    
+    
+    private OnClickListener manuPlusMinusListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+        	
+        	
+        	
+        	RelativeLayout parent = (RelativeLayout) v.getParent();
+        	TextView numberTV = (TextView)parent.findViewById(R.id.menuItemNumber);
+        	int number = 0;
+        	
+        	String numberString = numberTV.getText().toString();
+        	if(numberString!=null && !numberString.equals(""))
+        	{
+        		number = Integer.parseInt(numberString);
+        	}
+        	
+        	
+        	TextView totalPriceTV = (TextView)menuLayout.findViewById(R.id.totalTV);
+        	String totalPriceString = totalPriceTV.getText().toString();
+        	totalPriceString = totalPriceString.substring(1, totalPriceString.length());
+        	int totalPrice = Integer.parseInt(totalPriceString);
+        	
+        	TextView menuItemPriceTV = (TextView)parent.findViewById(R.id.menuItemPrice);
+        	String menuItemPriceString = menuItemPriceTV.getText().toString();
+        	menuItemPriceString = menuItemPriceString.substring(1, menuItemPriceString.length());
+        	int menuItemPrice = Integer.parseInt(menuItemPriceString);
+        	
+        	
+        	
+        	
+        	TextView tv = (TextView)v;
+        	
+        	if(tv.getText().equals("+"))
+        	{
+        		number ++;
+        		totalPrice += menuItemPrice;
+        	}
+        	else
+        	{
+        		if(number>0)
+        		{
+        			number--;
+        			totalPrice -= menuItemPrice;
+        		}
+        	}
+        	numberTV.setText(""+number);
+        	totalPriceTV.setText("$"+totalPrice);
         }
     };
 
