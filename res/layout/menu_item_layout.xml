@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/menuItemName"
+        android:layout_width="160sp"
+        android:layout_height="wrap_content"
+        android:minHeight = "60dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/border"
+        android:gravity="center"
+        android:text="印度炒泡"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/menuItemPrice"
+        android:layout_width="60sp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/menuItemName"
+        android:layout_alignTop="@+id/menuItemName"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@+id/menuItemName"
+        android:background="@drawable/border"
+        android:gravity="center"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/menuItemNumber"
+        android:layout_width="35sp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/menuItemName"
+        android:layout_alignTop="@+id/menuItemName"
+        android:layout_toRightOf="@+id/menuItemPrice"
+        android:background="@drawable/border"
+        android:gravity="center"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/menuItemPlus"
+        android:layout_width="40sp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/menuItemName"
+        android:layout_alignTop="@+id/menuItemName"
+        android:gravity="center"
+        android:layout_toRightOf="@+id/menuItemNumber"
+        android:layout_marginLeft="7dp"
+        android:text="+"
+        android:background="@drawable/border"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/menuItemMinus"
+        android:layout_width="40sp"
+        android:layout_height="wrap_content"
+		android:layout_alignBottom="@+id/menuItemName"
+        android:layout_alignTop="@+id/menuItemName"
+        android:gravity="center"
+        android:layout_toRightOf="@+id/menuItemPlus"
+        android:layout_marginLeft="7dp"
+        android:text="-"
+        android:background="@drawable/border"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

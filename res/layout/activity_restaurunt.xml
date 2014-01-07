@@ -21,7 +21,7 @@
 
         <RatingBar
             android:id="@+id/ratingBar1"
-            style="?android:attr/ratingBarStyle"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/restaurantImgView"
@@ -31,14 +31,13 @@
             android:id="@+id/titleTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/ratingBar1"
             android:layout_above="@+id/ratingBar1"
-            android:layout_marginBottom="10dp"
+            android:layout_alignRight="@+id/ratingBar1"
             android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
             android:layout_marginRight="15dp"
-            android:text="XM 麻辣鍋"
-            android:textSize="30sp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="30sp" />
 
         <ImageView
             android:id="@+id/restaurantImgView"
@@ -52,7 +51,7 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/RelativeLayout2"
         android:layout_alignRight="@+id/RelativeLayout2"
         android:paddingTop="10dip"
@@ -129,22 +128,6 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/parckingLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="停車"
-                android:background="@drawable/border_corner"
-                android:textColor = "#FFFFFF"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/parkingTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="10dip"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
                 android:id="@+id/webLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,16 +144,16 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
             
             <TextView
-                android:id="@+id/priceLabel"
+                android:id="@+id/descriptionLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="價目表"
+                android:text="其他項目"
                 android:background="@drawable/border_corner"
                 android:textColor = "#FFFFFF"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
             
             <TextView
-                android:id="@+id/priceTV"
+                android:id="@+id/descriptionTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
