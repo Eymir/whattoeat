@@ -220,14 +220,14 @@ containing a value of this type.
     public static final class id {
         public static final int RelativeLayout1=0x7f050010;
         public static final int RelativeLayout2=0x7f050011;
-        public static final int action_settings=0x7f050034;
+        public static final int action_settings=0x7f050035;
         public static final int addressTV=0x7f050016;
-        public static final int backTV=0x7f050031;
+        public static final int backTV=0x7f050032;
         public static final int backbtn=0x7f05000a;
-        public static final int centerPoint=0x7f050028;
         public static final int closedDaysLabel=0x7f05001b;
         public static final int closedDaysTV=0x7f05001c;
         public static final int commentTV=0x7f05002f;
+        public static final int confirmTV=0x7f050027;
         public static final int descriptionLabel=0x7f05001f;
         public static final int descriptionTV=0x7f050020;
         public static final int editText1=0x7f050009;
@@ -237,6 +237,7 @@ containing a value of this type.
         public static final int hybrid=0x7f050004;
         public static final int infoTV=0x7f05002c;
         public static final int itemTitle=0x7f050005;
+        public static final int leaveTV=0x7f050031;
         public static final int map=0x7f05000f;
         public static final int mapTV=0x7f05002e;
         public static final int menuItemMinus=0x7f050026;
@@ -246,7 +247,7 @@ containing a value of this type.
         public static final int menuItemPrice=0x7f050023;
         public static final int menuLayout=0x7f05002a;
         public static final int menuTV=0x7f05002d;
-        public static final int menu_settings=0x7f050033;
+        public static final int menu_settings=0x7f050034;
         public static final int mybrowser=0x7f050021;
         public static final int newPhotobtn=0x7f050006;
         public static final int none=0x7f050000;
@@ -265,10 +266,10 @@ containing a value of this type.
         public static final int terrain=0x7f050003;
         public static final int textViewP3=0x7f050015;
         public static final int titleTV=0x7f050013;
-        public static final int totalLabel=0x7f050027;
+        public static final int totalLabel=0x7f050028;
         public static final int totalTV=0x7f050029;
         public static final int view1=0x7f050007;
-        public static final int viewpagerLayout=0x7f050032;
+        public static final int viewpagerLayout=0x7f050033;
         public static final int webLabel=0x7f05001d;
         public static final int webTV=0x7f05001e;
     }
@@ -279,13 +280,12 @@ containing a value of this type.
         public static final int activity_item=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_map=0x7f030002;
-        public static final int activity_pager=0x7f030003;
-        public static final int activity_restaurunt=0x7f030004;
-        public static final int activity_web_view=0x7f030005;
-        public static final int layout3=0x7f030006;
-        public static final int menu_item_layout=0x7f030007;
-        public static final int menu_layout=0x7f030008;
-        public static final int viewpager_layout=0x7f030009;
+        public static final int activity_restaurunt=0x7f030003;
+        public static final int activity_web_view=0x7f030004;
+        public static final int layout3=0x7f030005;
+        public static final int menu_item_layout=0x7f030006;
+        public static final int menu_layout=0x7f030007;
+        public static final int viewpager_layout=0x7f030008;
     }
     public static final class menu {
         public static final int activity_main=0x7f0a0000;

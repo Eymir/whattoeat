@@ -6,49 +6,62 @@
 
  
 
+	<TextView
+        android:id="@+id/confirmTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+		android:layout_marginLeft="70dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/border_corner2"
+        android:text="Comfirm!"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    
     <TextView
         android:id="@+id/totalLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-     	android:layout_toLeftOf="@+id/centerPoint"
-     	android:layout_alignBottom="@+id/centerPoint"
+		android:layout_toLeftOf="@+id/totalTV"
+     	android:layout_alignBottom="@+id/totalTV"
         android:text="Total"
         android:background="@drawable/border_corner"
         android:textColor = "#FFFFFF"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-     <TextView
-         android:id="@+id/centerPoint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:text=""
-    	android:textAppearance="?android:attr/textAppearanceLarge" />
-     
+        
+   
 	<TextView
         android:id="@+id/totalTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_toRightOf="@+id/centerPoint"
-     	android:layout_alignBottom="@+id/centerPoint"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+     	android:layout_marginBottom="15dp"
+		android:layout_marginRight="30dp"
         android:gravity="center"
         android:minWidth="60dp"
         android:text="$0"
         android:background="@drawable/border_only_botton"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+	
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10sp"
+        android:paddingBottom="10sp"
+		android:layout_above="@+id/totalLabel">
+        
         
         <LinearLayout
             android:id="@+id/menuLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
             android:layout_marginTop="20dp"
+            android:paddingBottom="20sp"
             android:orientation="vertical" >
 
         </LinearLayout>

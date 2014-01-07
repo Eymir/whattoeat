@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:minHeight = "60dp"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/border"
         android:gravity="center"
@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/menuItemNumber"
-        android:layout_width="30sp"
+        android:layout_width="35sp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/menuItemName"
         android:layout_alignTop="@+id/menuItemName"
@@ -45,7 +45,7 @@
 
     <TextView
         android:id="@+id/menuItemPlus"
-        android:layout_width="30sp"
+        android:layout_width="40sp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/menuItemName"
         android:layout_alignTop="@+id/menuItemName"
@@ -58,7 +58,7 @@
 
     <TextView
         android:id="@+id/menuItemMinus"
-        android:layout_width="30sp"
+        android:layout_width="40sp"
         android:layout_height="wrap_content"
 		android:layout_alignBottom="@+id/menuItemName"
         android:layout_alignTop="@+id/menuItemName"
