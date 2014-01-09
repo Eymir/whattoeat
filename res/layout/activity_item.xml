@@ -12,6 +12,25 @@
         android:layout_marginTop="36dp"
         android:text="牛排" />
 
+    <ImageView
+        android:id="@+id/view1"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/itemTitle"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_below="@+id/ratingBar1"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/border"
+        android:ems="10"
+        android:inputType="textMultiLine" >
+        
+    </EditText>
+
     <Button
         android:id="@+id/newPhotobtn"
         style="?android:attr/buttonStyleSmall"
@@ -21,45 +40,20 @@
         android:layout_below="@+id/view1"
         android:text="新增照片" />
 
-    <View
-        android:id="@+id/view1"
-        android:layout_width="250dp"
-        android:layout_height="150dp"
-        android:layout_below="@+id/itemTitle"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/test1" />
-
-    <RatingBar
-        android:id="@+id/ratingBar1"
-        style="?android:attr/ratingBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/view1"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="34dp" />
-
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="wrap_content"
-        android:background="@drawable/border"
-        android:layout_height="100dp"
-        android:layout_alignLeft="@+id/newPhotobtn"
-        android:layout_alignRight="@+id/view1"
-        android:layout_below="@+id/newPhotobtn"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textMultiLine" >
-
-        <requestFocus />
-    </EditText>
-
     <Button
         android:id="@+id/backbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
         android:text="返回" />
+
+    <RatingBar
+        android:id="@+id/ratingBar1"
+        style="?android:attr/ratingBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newPhotobtn"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

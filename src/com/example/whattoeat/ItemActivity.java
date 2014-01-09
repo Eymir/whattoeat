@@ -9,8 +9,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.whattoeat.MainActivity.LoadFromServer;
-
 import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,53 +16,122 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ItemActivity extends Activity {
 
-	private static String server_url_load = "http://192.168.1.101/wteRestName.php";
-	JSONParser jsonParser = new JSONParser();
 	Button backbtn, newphotobtn;
-	View view1;
+	RatingBar rbar;
+	ImageView view1;
 	TextView itemTitle;
+	EditText et;
+	
+	SQLiteDatabase db;
+	DBHelper helper = new DBHelper(ItemActivity.this);
+	String photo = null;
+	int item,rating=0;
+	String rest,title = "TEMP";
+	String comment = "";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_item);
 		
 		Bundle bundle = getIntent().getExtras();
-		//String title = bundle.getString("title");
-		String title = "TEMP";
-		String photo = bundle.getString("photo");
-		int restaurant = bundle.getInt("restaurant");
 		
-		view1 = findViewById(R.id.view1);
+		title = bundle.getString("food");
+		rest = bundle.getString("restaurant");
+		
+		db = helper.getReadableDatabase();
+		final String sql = "select * from history where `restaurant` = '"+rest+"' and `menu` = '"+title+"' order by `date` desc";
+		Cursor cursor = db.rawQuery(sql, null);
+		
+		int rowsNum = cursor.getCount();
+		if (rowsNum != 0) {
+			cursor.moveToFirst();
+			item = cursor.getInt(0);
+			photo = cursor.getString(4);
+			rating = cursor.getInt(5);
+			comment = cursor.getString(6);
+			Log.d("emo","rate "+rating);
+			//Log.d("emo", photo);
+		}
+		cursor.close();
+		db.close();
+		
+		view1 = (ImageView) findViewById(R.id.view1);
 		itemTitle = (TextView) findViewById(R.id.itemTitle);
-		if (photo.equals("")) {
+		rbar = (RatingBar) findViewById(R.id.ratingBar1);
+		rbar.setRating(rating);
+		rbar.setStepSize(1);
+		et = (EditText) findViewById(R.id.editText1);
+		if (photo == null || photo.equals("")) {
 			
 		} else {
-			File imgFile = new File(photo);
+			File imgFile = new File(Environment.getExternalStorageDirectory(),photo);
 			if(imgFile.exists()) {
-			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			    ((ImageView) view1).setImageBitmap(myBitmap);
+				Log.d("emo","file exist");
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = false;
+				options.inPreferredConfig = Config.RGB_565;
+				options.inSampleSize = 2;
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),options);
+			    view1.setImageBitmap(myBitmap);
 			    
 			} else {
 				
 			}
 		}
 		//view1.setBackgroundResource(img);
-		//itemTitle.setText(title);
-		LoadFromServer query = new LoadFromServer();
-		query.setParams(restaurant);;
-		query.execute();
+		itemTitle.setText(title);
+		
+		et.setText(comment);
+		et.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				String text = s.toString();
+				db = helper.getWritableDatabase();
+				ContentValues values = new ContentValues();
+				values.put("comment", text);
+				int r = db.update("history", values, "_id= "+item, null);
+				Log.d("emo","affect row "+r);
+				db.close();
+			}
+		});
 		
 		newphotobtn = (Button) findViewById(R.id.newPhotobtn);
 		newphotobtn.setOnClickListener(new OnClickListener() {
@@ -73,8 +140,9 @@ public class ItemActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				File tmpFile = new File(Environment.getExternalStorageDirectory(),"image.jpg");
+				File tmpFile = new File(Environment.getExternalStorageDirectory(),"img"+item+"_"+rating+".jpg");
 				Uri outputFileUri = Uri.fromFile(tmpFile);
+				
 				intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri); 
 				startActivityForResult(intent, 0); 
 			}
@@ -85,15 +153,61 @@ public class ItemActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//Intent intent = new Intent();
-				//intent.setClass(ItemActivity.this, MainActivity.class);
-				//startActivity(intent); 
+				// TODO Auto-generated method stub	
+				Intent intent = new Intent();
+				intent.setClass(ItemActivity.this, MainActivity.class);
+				startActivity(intent); 
 				ItemActivity.this.finish(); 
+			}
+		});
+		
+		rbar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+			
+			@Override
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+					boolean fromUser) {
+				// TODO Auto-generated method stub
+				db = helper.getWritableDatabase();
+				ContentValues values = new ContentValues();
+				values.put("rating", (int)rating);
+				int r = db.update("history", values, "_id= "+item, null);
+				Log.d("emo","affect row "+r);
+				db.close();
 			}
 		});
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK ) {
+			photo = "img"+item+"_"+rating+".jpg";
+			db = helper.getWritableDatabase();
+			ContentValues values = new ContentValues();
+			values.put("photo", photo);
+			int r = db.update("history", values, "_id= "+item, null);
+			Log.d("emo","affect row "+r);
+			db.close();
+
+			File imgFile = new File(Environment.getExternalStorageDirectory(), photo);
+			if(imgFile.exists()) {
+				Log.d("emo","file exist");
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = false;
+				options.inPreferredConfig = Config.RGB_565;
+				options.inSampleSize = 2;
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),options);
+			    view1.setImageBitmap(myBitmap);
+			    
+			} else {
+				Log.d("emo","can't find photo");
+				Log.d("emo",photo);
+			}
+			
+		} else if (resultCode == Activity.RESULT_CANCELED ) {
+			Toast.makeText(getApplicationContext(), "Failed to take photo", Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -101,36 +215,10 @@ public class ItemActivity extends Activity {
 		return true;
 	}
 	
-	class LoadFromServer extends AsyncTask<String, String, String> {
-		private int restaurant;
-		private String name;
-		public void setParams(int r) {
-			restaurant = r;
-		}
-
-		@Override
-		protected String doInBackground(String... args) {
-			// TODO Auto-generated method stub
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("restaurant", Integer.toString(restaurant)));
-			JSONObject json = jsonParser.makeHttpRequest(server_url_load,
-                    "POST", params);
-			
-			try {
-				 int success = json.getInt("success");
-				 if (success == 1) {
-					 //histmenu = json.getJSONArray("restaurant");
-					 name = json.getString("restaurant");
-					 itemTitle.setText(name);
-				 }
-				
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		
+	public void onBackPressed() {
+		Intent intent = new Intent();
+		intent.setClass(ItemActivity.this, MainActivity.class);
+		startActivity(intent); 
+		ItemActivity.this.finish(); 
 	}
-
 }

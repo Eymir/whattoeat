@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -13,6 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private final static int DATABASE_VERSION = 1;
     
 	public DBHelper(Context context) {
+		
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		// TODO Auto-generated constructor stub
 	}
@@ -22,11 +24,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		final String INIT_TABLE = "CREATE TABLE history (" +
                 "_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
 				"date VARCHAR, " +
-                "restaurant INTEGER, " +
-                "menu INTEGER, " +
+                "restaurant VARCHAR, " +
+                "menu VARCHAR, " +
                 "photo VARCHAR, " +
-                "rating INTEGER " +
+                "rating INTEGER, " +
+                "comment TEXT" +
                 ");"; 
+		Log.d("emo", "init db");
 		db.execSQL(INIT_TABLE);
 	}
 
