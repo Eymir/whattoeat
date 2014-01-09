@@ -16,7 +16,7 @@
 		android:layout_marginLeft="70dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/border_corner2"
-        android:text="Comfirm!"
+        android:text="Confirm!"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
     
@@ -52,6 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10sp"
         android:paddingBottom="10sp"
+        android:layout_alignParentTop="true"
 		android:layout_above="@+id/totalLabel">
         
         

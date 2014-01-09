@@ -1,5 +1,6 @@
 package com.example.whattoeat;
 
+import android.R.bool;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -76,9 +77,8 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View layout3 = null;
 
 	// server
-	// private String baseUrl =
-	// "http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
-	private String baseUrl = "http://192.168.1.116/wteSuggest.php?";
+	private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
+	//private String baseUrl = "http://192.168.1.116/wteSuggest.php?";
 
 	// restaurant info
 	private String restName = null; // restaurant name
@@ -92,11 +92,13 @@ public class PagerActivity extends Activity implements LocationListener {
 	private String restMenu = null;
 	private Double resLat = null;
 	private Double resLng = null;
-
+	private String[] splitMenu;
+	
 	// flags
 	private String lastRes = null;
 	private String flag = "0";
-
+	private boolean confirmFlag = true; 
+	
 	// google map settings
 	private GoogleMap map;
 
@@ -247,7 +249,8 @@ public class PagerActivity extends Activity implements LocationListener {
 		// set pager item
 		myViewPager.setCurrentItem(0);
 		TextView tv = (TextView) findViewById(R.id.infoTV);
-		tv.setBackground(getResources().getDrawable(R.drawable.border_corner));
+		//tv.setBackground(getResources().getDrawable(R.drawable.border_corner));
+		tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_corner));
 		tv.setOnClickListener(pagerTVListener);
 		tv = (TextView) findViewById(R.id.menuTV);
 		tv.setOnClickListener(pagerTVListener);
@@ -263,19 +266,19 @@ public class PagerActivity extends Activity implements LocationListener {
 				Log.d("k", "onPageSelected - " + arg0);
 
 				TextView tv = (TextView) findViewById(R.id.infoTV);
-				tv.setBackground(getResources().getDrawable(
+				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_only_botton));
 				tv.setTextColor(Color.BLACK);
 				tv = (TextView) findViewById(R.id.menuTV);
-				tv.setBackground(getResources().getDrawable(
+				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_only_botton));
 				tv.setTextColor(Color.BLACK);
 				tv = (TextView) findViewById(R.id.mapTV);
-				tv.setBackground(getResources().getDrawable(
+				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_only_botton));
 				tv.setTextColor(Color.BLACK);
 				tv = (TextView) findViewById(R.id.commentTV);
-				tv.setBackground(getResources().getDrawable(
+				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_only_botton));
 				tv.setTextColor(Color.BLACK);
 
@@ -291,7 +294,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				if (arg0 == 3) {
 					tv = (TextView) findViewById(R.id.commentTV);
 				}
-				tv.setBackground(getResources().getDrawable(
+				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_corner));
 				tv.setTextColor(Color.WHITE);
 			}
@@ -540,6 +543,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
 			tmpTv.setText(response);
+			
 			Log.d("emo",response);
 			if (!response.equals("No restaurant available")) {
 
@@ -587,11 +591,11 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 
 		private void setMenu() {
-			// restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
+			 //restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
 
 			LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
 			if (restMenu != null && !restMenu.equals("nomenu")) {
-				String[] splitMenu = restMenu.split(";");
+				splitMenu = restMenu.split(";");
 				// TextView tv = (TextView) findViewById(R.id.);
 				// ll.addview
 
@@ -639,29 +643,75 @@ public class PagerActivity extends Activity implements LocationListener {
 
 				@Override
 				public void onClick(View v) {
-					/*
-					 * Intent intent = new Intent(); Bundle bundle = new
-					 * Bundle(); //restName = "¿ß¿ßÁç"; bundle.putString("lastRes",
-					 * restName); bundle.putString("flag", "2");
-					 * intent.putExtras(bundle);
-					 * intent.setClass(PagerActivity.this, PagerActivity.class);
-					 * startActivity(intent); PagerActivity.this.finish();
-					 */
-					SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
-					String datetime = s.format(new Date());
-					for (String temp : mealItem) {
-						ContentValues values = new ContentValues();
-						values.put("restaurant", restName);
-						values.put("menu", temp);
-						values.put("date", datetime);
-						values.put("rating", 3);
-						values.put("comment", "");
-						values.put("photo", "");
-						Log.d("emo","inserting");
-						long c = db.insertOrThrow("history", null, values);
-						Log.d("emo","insert end, "+c);
-					}
+					
+					LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
+					int viewCount = ll.getChildCount();
+					
+					if(confirmFlag)
+					{
+						confirmFlag = false;
+						TextView confirmText = (TextView)v;
+						confirmText.setText("Cancel!");
+						
+						for(int i = 0;i<viewCount;i++)
+						{
+							View itemView = ll.getChildAt(i);
+							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+							if(itemCount.getText().toString().equals("0"))
+							{
 
+								itemView.findViewById(R.id.menuItemName).setEnabled(false);
+								itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
+								itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
+								
+							}
+
+							itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
+							itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
+							
+							
+							SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
+							String datetime = s.format(new Date());
+							for (String temp : mealItem) {
+								ContentValues values = new ContentValues();
+								values.put("restaurant", restName);
+								values.put("menu", temp);
+								values.put("date", datetime);
+								values.put("rating", 3);
+								values.put("comment", "");
+								values.put("photo", "");
+								Log.d("emo","inserting");
+								long c = db.insertOrThrow("history", null, values);
+								Log.d("emo","insert end, "+c);
+							}
+							 
+
+						}
+						
+					}
+					else
+					{
+						confirmFlag = true;
+						TextView confirmText = (TextView)v;
+						confirmText.setText("Confirm!");
+						
+						for(int i = 0;i<viewCount;i++)
+						{
+							View itemView = ll.getChildAt(i);
+							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+							if(itemCount.getText().toString().equals("0"))
+							{
+
+								itemView.findViewById(R.id.menuItemName).setEnabled(true);
+								itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
+								itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
+							}
+
+							itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
+							itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
+						}
+					}
+					
 				}
 			});
 		}
@@ -778,12 +828,12 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			TextView tv = (TextView) v;
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				v.setBackground(getResources().getDrawable(
+				v.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_corner));
 
 				tv.setTextColor(Color.WHITE);
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-				v.setBackground(getResources().getDrawable(
+				v.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_corner2));
 				tv.setTextColor(Color.BLACK);
 				// v.setBackgroundDrawable();
@@ -801,12 +851,12 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			TextView tv = (TextView) v;
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				v.setBackground(getResources().getDrawable(
+				v.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_corner));
 
 				tv.setTextColor(Color.WHITE);
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-				v.setBackground(getResources().getDrawable(R.drawable.border));
+				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.border));
 				tv.setTextColor(Color.BLACK);
 				// v.setBackgroundDrawable();
 			}
