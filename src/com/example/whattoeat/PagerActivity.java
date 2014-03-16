@@ -1,6 +1,6 @@
 package com.example.whattoeat;
 
-import android.R.bool;
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.http.HttpResponse;
@@ -75,11 +74,16 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View menuLayout = null;
 	private View mapLayout = null;
 	private View layout3 = null;
-
+	private View myComment = null;
+	
+	
 	// server
-	private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
+	//private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
 	//private String baseUrl = "http://192.168.1.116/wteSuggest.php?";
-
+	private String baseUrl = "http://140.116.86.212/api/query.php?";
+	
+	
+	
 	// restaurant info
 	private String restName = null; // restaurant name
 	private String imageFileURL = null; // restaurant image url
@@ -111,12 +115,15 @@ public class PagerActivity extends Activity implements LocationListener {
 	DBHelper helper = new DBHelper(PagerActivity.this);
 	SQLiteDatabase db;
 
+	
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager_layout);
-
+		
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			flag = bundle.getString("flag");
@@ -142,12 +149,12 @@ public class PagerActivity extends Activity implements LocationListener {
 		initial();
 
 		/**
-		 * set restaurant information in activity_restaurant now at httpSynk
+		 * set restaurant information in activity_restaurant now at HttpTask
 		 * **/
 		// setRestaurantInfo();
 
 		/**
-		 * set map now at httpSynk
+		 * set map now at HttpTask
 		 * **/
 		// setMap();
 
@@ -201,8 +208,8 @@ public class PagerActivity extends Activity implements LocationListener {
 		latitude = 22.9;
 		longitude = 120.0;
 
-		String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude
-				+ "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
+		//String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude + "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
+		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + 1 + "&index_end=" + 5;
 		new HttpTask().execute(url);
 	}
 
@@ -236,11 +243,14 @@ public class PagerActivity extends Activity implements LocationListener {
 		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
 		layout3 = mInflater.inflate(R.layout.layout3, null);
+		myComment = mInflater.inflate(R.layout.activity_item, null);
+		
 
 		mListViews.add(infoLayout);
 		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
 		mListViews.add(layout3);
+		//mListViews.add(myComment);
 
 		myAdapter = new MyPagerAdapter();
 		myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
@@ -258,7 +268,12 @@ public class PagerActivity extends Activity implements LocationListener {
 		tv.setOnClickListener(pagerTVListener);
 		tv = (TextView) findViewById(R.id.commentTV);
 		tv.setOnClickListener(pagerTVListener);
-
+		
+		tv = (TextView) findViewById(R.id.myCommentTV);
+		tv.setOnClickListener(pagerTVListener);
+		tv.setVisibility(View.GONE);
+		
+		
 		myViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
@@ -281,7 +296,12 @@ public class PagerActivity extends Activity implements LocationListener {
 				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_only_botton));
 				tv.setTextColor(Color.BLACK);
+				tv = (TextView) findViewById(R.id.myCommentTV);
+				tv.setBackgroundDrawable(getResources().getDrawable(
+						R.drawable.border_only_botton));
+				tv.setTextColor(Color.BLACK);
 
+				
 				if (arg0 == 0) {
 					tv = (TextView) findViewById(R.id.infoTV);
 				}
@@ -293,6 +313,9 @@ public class PagerActivity extends Activity implements LocationListener {
 				}
 				if (arg0 == 3) {
 					tv = (TextView) findViewById(R.id.commentTV);
+				}
+				if (arg0 == 4) {
+					tv = (TextView) findViewById(R.id.myCommentTV);
 				}
 				tv.setBackgroundDrawable(getResources().getDrawable(
 						R.drawable.border_corner));
@@ -337,6 +360,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			@Override
 			public void onClick(View v) {
+				/*
 				Intent intent = new Intent();
 				Bundle bundle = new Bundle();
 				// restName = "XD ¿ß¿ßÁç";
@@ -346,7 +370,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				intent.setClass(PagerActivity.this, PagerActivity.class);
 				startActivity(intent);
 				PagerActivity.this.finish();
-
+*/
 			}
 		});
 
@@ -358,6 +382,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			@Override
 			public void onClick(View v) {
+				/*
 				Intent intent = new Intent();
 				Bundle bundle = new Bundle();
 
@@ -368,7 +393,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				intent.setClass(PagerActivity.this, PagerActivity.class);
 				startActivity(intent);
 				PagerActivity.this.finish();
-
+*/
 			}
 		});
 
@@ -378,6 +403,17 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			@Override
 			public void onClick(View v) {
+				
+				TextView tv = (TextView) findViewById(R.id.myCommentTV);
+				tv.setVisibility(View.VISIBLE);
+				
+				mListViews.add(myComment);
+
+				myAdapter = new MyPagerAdapter();
+				myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
+				myViewPager.setAdapter(myAdapter);
+				myViewPager.setCurrentItem(4);
+				//mListViews.add(myComment);
 				/*
 				 * Intent intent = new Intent(); Bundle bundle = new Bundle();
 				 * //restName = "¿ß¿ßÁç"; bundle.putString("lastRes", restName);
@@ -545,21 +581,27 @@ public class PagerActivity extends Activity implements LocationListener {
 			tmpTv.setText(response);
 			
 			Log.d("emo",response);
+			//response = "No restaurant available";
+			
 			if (!response.equals("No restaurant available")) {
 
 				String[] splitInfo = response.split("\t");
 
-				restName = splitInfo[0]; // restaurant name
-				imageFileURL = splitInfo[1]; // restaurant image url
-				restAddr = splitInfo[2]; // restaurant address
-				restTel = splitInfo[3]; // restaurant telephone number
-				restOpen = splitInfo[4]; // restaurant opening time
-				restClosed = splitInfo[5]; // restaurant closed days
-				restWeb = splitInfo[6]; // restaurant web site
-				restDescription = splitInfo[7]; // restaurant price
-				restMenu = splitInfo[8];
-				resLat = Double.parseDouble(splitInfo[9]);
-				resLng = Double.parseDouble(splitInfo[10]);
+				if(splitInfo.length == 11)
+				{
+				
+					restName = splitInfo[0]; // restaurant name
+					imageFileURL = splitInfo[1]; // restaurant image url
+					restAddr = splitInfo[2]; // restaurant address
+					restTel = splitInfo[3]; // restaurant telephone number
+					restOpen = splitInfo[4]; // restaurant opening time
+					restClosed = splitInfo[5]; // restaurant closed days
+					restWeb = splitInfo[6]; // restaurant web site
+					restDescription = splitInfo[7]; // restaurant price
+					restMenu = splitInfo[8];
+					resLat = Double.parseDouble(splitInfo[9]);
+					resLng = Double.parseDouble(splitInfo[10]);
+				}
 
 			} else {
 				new AlertDialog.Builder(PagerActivity.this)
@@ -591,8 +633,8 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 
 		private void setMenu() {
-			 //restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
-
+			restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
+			//restMenu = "nomenu";
 			LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
 			if (restMenu != null && !restMenu.equals("nomenu")) {
 				splitMenu = restMenu.split(";");
@@ -657,37 +699,40 @@ public class PagerActivity extends Activity implements LocationListener {
 						{
 							View itemView = ll.getChildAt(i);
 							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-							if(itemCount.getText().toString().equals("0"))
+							if(itemCount!=null)
 							{
-
-								itemView.findViewById(R.id.menuItemName).setEnabled(false);
-								itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
-								itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
-								
+								if(itemCount.getText().toString().equals("0"))
+								{
+	
+									itemView.findViewById(R.id.menuItemName).setEnabled(false);
+									itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
+									itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
+									
+									
+								}
+	
+								itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
+								((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
+								itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
+								((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
 							}
-
-							itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
-							itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
-							
-							
-							SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
-							String datetime = s.format(new Date());
-							for (String temp : mealItem) {
-								ContentValues values = new ContentValues();
-								values.put("restaurant", restName);
-								values.put("menu", temp);
-								values.put("date", datetime);
-								values.put("rating", 3);
-								values.put("comment", "");
-								values.put("photo", "");
-								Log.d("emo","inserting");
-								long c = db.insertOrThrow("history", null, values);
-								Log.d("emo","insert end, "+c);
-							}
-							 
-
 						}
-						
+						/*
+						SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
+						String datetime = s.format(new Date());
+						for (String temp : mealItem) {
+							ContentValues values = new ContentValues();
+							values.put("restaurant", restName);
+							values.put("menu", temp);
+							values.put("date", datetime);
+							values.put("rating", 3);
+							values.put("comment", "");
+							values.put("photo", "");
+							Log.d("emo","inserting");
+							long c = db.insertOrThrow("history", null, values);
+							Log.d("emo","insert end, "+c);
+							}
+						*/
 					}
 					else
 					{
@@ -699,16 +744,22 @@ public class PagerActivity extends Activity implements LocationListener {
 						{
 							View itemView = ll.getChildAt(i);
 							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-							if(itemCount.getText().toString().equals("0"))
+							if(itemCount!=null)
 							{
-
-								itemView.findViewById(R.id.menuItemName).setEnabled(true);
-								itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
-								itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
+								if(itemCount.getText().toString().equals("0"))
+								{
+	
+									itemView.findViewById(R.id.menuItemName).setEnabled(true);
+									itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
+									itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
+								}
+	
+								itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
+								((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
+								itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
+								((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
+								
 							}
-
-							itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
-							itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
 						}
 					}
 					
@@ -815,13 +866,16 @@ public class PagerActivity extends Activity implements LocationListener {
 			case R.id.commentTV:
 				myViewPager.setCurrentItem(3);
 				break;
+			case R.id.myCommentTV:
+				myViewPager.setCurrentItem(4);
+				break;
 			default:
 				break;
 			}
 		}
 	};
 
-	private OnTouchListener btTouchListener = new OnTouchListener() {
+	public OnTouchListener btTouchListener = new OnTouchListener() {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {

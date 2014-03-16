@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <Button
+    <TextView
         android:id="@+id/optionbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,7 +12,10 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="22dp"
         android:layout_marginRight="21dp"
-        android:text="Option" />
+        android:text="Filter" 
+        android:gravity="center"
+        android:background="@drawable/border_corner2"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView1"

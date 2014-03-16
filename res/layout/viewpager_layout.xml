@@ -62,7 +62,16 @@
         android:text="Comment"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-
+	<TextView
+        android:id="@+id/myCommentTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/commentTV"
+        android:layout_toRightOf="@+id/commentTV"
+        android:background="@drawable/border_only_botton"
+        android:text="My Comment"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     
 
