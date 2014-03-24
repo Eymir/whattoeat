@@ -12,8 +12,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:text="倦怠週期"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -24,12 +24,13 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_toRightOf="@+id/spaceView"
-        android:layout_alignTop="@+id/spaceView" 
+        android:layout_alignBottom="@+id/tireTimeLabel" 
+        android:background="@drawable/border_only_botton"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView
         android:id="@+id/acceptiblePriceLabel" 
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tireTimeLabel"
@@ -44,9 +45,19 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
 		android:layout_alignLeft="@+id/tireTimespinner"
-        android:layout_alignTop="@+id/acceptiblePriceLabel" 
+        android:layout_alignBottom="@+id/acceptiblePriceLabel"
+        android:background="@drawable/border_only_botton"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+
+    <TextView
+        android:id="@+id/bottomSpaceTextView" 
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_below="@+id/acceptiblePriceLabel"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
     <TextView
         android:id="@+id/spaceView"
         android:layout_width="wrap_content"
@@ -55,4 +66,5 @@
         android:layout_alignTop="@+id/tireTimeLabel" 
         android:text="" />
     
+
 </RelativeLayout>

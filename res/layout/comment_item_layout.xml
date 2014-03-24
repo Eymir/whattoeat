@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/commentIdTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="id"
+        android:background="@drawable/border_corner"
+        android:textColor = "#FFFFFF"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+     <RatingBar
+            android:id="@+id/commentRatingBar"
+            style="android:attr/ratingBarStyleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_alignBottom="@+id/commentIdTV"
+            android:layout_toRightOf="@+id/commentIdTV"/>
+
+     <TextView
+         android:id="@+id/commnentCommentTV"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/commentIdTV"
+		 android:layout_alignLeft="@+id/commnentCommentTV"
+         android:text="comment"
+         android:background="@drawable/border_only_botton"
+         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

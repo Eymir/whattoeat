@@ -10,9 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -44,6 +47,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -56,17 +60,27 @@ public class MainActivity extends Activity {
 	private LinearLayout hbox; 
 	
 	
-	 private Spinner spinner;
-	 private String[] list = {"鉛筆","原子筆","鋼筆","毛筆","彩色筆"};
-	 private ArrayAdapter<String> listAdapter;
+	 private Spinner spinnerTired;
+	 private Spinner spinnerPrice;
+	 private String[] tiredList = {"一天","三天","一個禮拜","一個月","每餐都一樣也沒問題!!"};
+	 private String[] priceList = {"100","300","500","1000","土豪的節奏"};
+	 private ArrayAdapter<String> tiredListAdapter;
+	 private ArrayAdapter<String> priceListAdapter;
 	 private Context mContext;
-	
-	
+	 private ConnectivityManager CM;
+	 private LocationManager LocationStatus;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		
+		CM = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);	//connection info
+		LocationStatus = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));	//location info
+		
+		setFilterLayout();
+		
 	
 		hbox = (LinearLayout) findViewById(R.id.historybox);
 		goimg = super.findViewById(R.id.goimg);
@@ -87,7 +101,6 @@ public class MainActivity extends Activity {
 				
 		       // mContext = this.getApplicationContext();
 
-
 				
 				LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
 				View filterView = inflater.inflate(R.layout.filter_dialog,null);
@@ -99,18 +112,20 @@ public class MainActivity extends Activity {
 				AlertDialog dialog = builder.create();
 				dialog.show();
 
-				
-				
-				
-		        spinner = (Spinner)filterView.findViewById(R.id.tireTimespinner);
-		        
-		        listAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, list);
-		        spinner.setAdapter(listAdapter);
 
-		        spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+				spinnerTired = (Spinner)filterView.findViewById(R.id.tireTimespinner);
+				spinnerPrice = (Spinner)filterView.findViewById(R.id.acceptiblePricespinner);
+				
+				tiredListAdapter = new ArrayAdapter<String>(MainActivity.this, R.drawable.my_spinner_item, tiredList);
+		        spinnerTired.setAdapter(tiredListAdapter);
+		        
+		        priceListAdapter = new ArrayAdapter<String>(MainActivity.this, R.drawable.my_spinner_item, priceList);
+		        spinnerPrice.setAdapter(priceListAdapter);
+
+		        spinnerTired.setOnItemSelectedListener(new OnItemSelectedListener(){
 		            @Override
 		            public void onItemSelected(AdapterView<?> arg0, View arg1,int position, long arg3) {
-		               //Toast.makeText(mContext, "你選的是"+list[position], Toast.LENGTH_SHORT).show();
+		               //Toast.makeText(mContext, "你選的是"+tiredList[position], Toast.LENGTH_SHORT).show();
 
 		            }
 		            @Override
@@ -119,7 +134,17 @@ public class MainActivity extends Activity {
 		            }
 		        });
 				
-				
+		        spinnerPrice.setOnItemSelectedListener(new OnItemSelectedListener(){
+		            @Override
+		            public void onItemSelected(AdapterView<?> arg0, View arg1,int position, long arg3) {
+		               //Toast.makeText(mContext, "你選的是"+priceList[position], Toast.LENGTH_SHORT).show();
+
+		            }
+		            @Override
+		            public void onNothingSelected(AdapterView<?> arg0) {
+		               // TODO Auto-generated method stub
+		            }
+		        });
 				
 				
 				/*
@@ -160,12 +185,26 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, PagerActivity.class);
-				startActivity(intent); 
-				MainActivity.this.finish(); 
+				
+				
+				if(CM.getActiveNetworkInfo() == null)
+				{
+					//alertWithSetting("請開啟網路服務");
+					alertWithSetting("請開啟網路服務",new Intent(Settings.ACTION_WIFI_SETTINGS));
+				}
+				else if (!(LocationStatus.isProviderEnabled(LocationManager.GPS_PROVIDER)
+						|| LocationStatus.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
+					alertWithSetting("請開啟定位服務",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+				} 
+				else
+				{				
+					// TODO Auto-generated method stub
+					//Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent();
+					intent.setClass(MainActivity.this, PagerActivity.class);
+					startActivity(intent); 
+					MainActivity.this.finish(); 
+				}
 			}
 		});
 		
@@ -200,6 +239,13 @@ public class MainActivity extends Activity {
 		//addHist(R.drawable.test2);
 		//addHist(R.drawable.test3);
 		//addHist(R.drawable.test4);
+	}
+	
+	private void setFilterLayout()
+	{
+		
+		
+		
 	}
 	
 	public void addHist(int item, String rest, String title, String photo, int rating)
@@ -294,6 +340,22 @@ public class MainActivity extends Activity {
 		}
 
 	};
+	
+	private void alertWithSetting(String message,final Intent i)
+	{
+		new AlertDialog.Builder(MainActivity.this)
+		.setTitle(message)
+		.setPositiveButton("確定",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int which) {
+						startActivity(i); // 開啟設定頁面
+						// continue with delete
+					}
+				}).show();
+	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

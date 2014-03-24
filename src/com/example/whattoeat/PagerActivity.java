@@ -5,9 +5,12 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +21,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.view.Menu;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,12 +60,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.MediaStore;
 import android.provider.Settings;
 
 @SuppressLint("NewApi")
@@ -73,8 +80,9 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View infoLayout = null;
 	private View menuLayout = null;
 	private View mapLayout = null;
-	private View layout3 = null;
-	private View myComment = null;
+	//private View layout3 = null;
+	private View commentLayout = null;
+	private View myCommentLayout = null;
 	
 	
 	// server
@@ -97,6 +105,9 @@ public class PagerActivity extends Activity implements LocationListener {
 	private Double resLat = null;
 	private Double resLng = null;
 	private String[] splitMenu;
+	private String[] splitRes = null;
+	
+	
 	
 	// flags
 	private String lastRes = null;
@@ -123,7 +134,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.viewpager_layout);
-		
+		/*
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			flag = bundle.getString("flag");
@@ -135,6 +146,8 @@ public class PagerActivity extends Activity implements LocationListener {
 
 		db = helper.getWritableDatabase();
 		mealItem = new ArrayList<String>();
+		*/
+		
 		/** set pager layout **/
 		setPagerItem();
 
@@ -142,9 +155,6 @@ public class PagerActivity extends Activity implements LocationListener {
 		 * send deviceId, GPS and last restaurant to server using http GET
 		 * request and get restaurant information to initial
 		 * **/
-
-		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		deviceId = telephonyManager.getDeviceId();
 
 		initial();
 
@@ -158,6 +168,8 @@ public class PagerActivity extends Activity implements LocationListener {
 		 * **/
 		// setMap();
 
+		
+		 setMyComment();
 	}
 
 	private void locationServiceInitial() {
@@ -178,6 +190,12 @@ public class PagerActivity extends Activity implements LocationListener {
 	}
 
 	private void initial() {
+		
+		
+		// device id
+		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		deviceId = telephonyManager.getDeviceId();
+		
 
 		// GPS
 		LocationManager status = (LocationManager) (this
@@ -186,10 +204,10 @@ public class PagerActivity extends Activity implements LocationListener {
 				|| status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 			// ¦pªGGPS©Îºô¸ô©w¦ì¶}±Ò¡A©I¥slocationServiceInitial()§ó·s¦ì¸m
 			locationServiceInitial();
-		} else {
-			Toast.makeText(this, "½Ð¶}±Ò©w¦ìªA°È", Toast.LENGTH_LONG).show();
-			startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); // ¶}±Ò³]©w­¶­±
+		} else {	
+			//alertWithSetting("½Ð¶}±Ò©w¦ìªA°È",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
+		
 
 		String nowRest = lastRes;
 		if (flag.equals("2") && nowRest == null) {
@@ -207,11 +225,21 @@ public class PagerActivity extends Activity implements LocationListener {
 
 		latitude = 22.9;
 		longitude = 120.0;
-
+		
+		/*
+		filePath = new File(PATH);	//§PÂ_¥Ø¿ý¦s¤£¦s¦b
+		if(!filePath.exists()){
+			filePath.mkdirs();
+		}TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+	    deviceid = telephonyManager.getDeviceId();
+		*/
+		
 		//String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude + "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
 		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + 1 + "&index_end=" + 5;
 		new HttpTask().execute(url);
 	}
+	
+	
 
 	private void setMap() {
 		// set map
@@ -242,14 +270,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
 		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
-		layout3 = mInflater.inflate(R.layout.layout3, null);
-		myComment = mInflater.inflate(R.layout.activity_item, null);
+		commentLayout = mInflater.inflate(R.layout.comment_layout, null);
+		//layout3 = mInflater.inflate(R.layout.layout3, null);
+		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
 		
 
 		mListViews.add(infoLayout);
 		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
-		mListViews.add(layout3);
+		mListViews.add(commentLayout);
+		//mListViews.add(layout3);
 		//mListViews.add(myComment);
 
 		myAdapter = new MyPagerAdapter();
@@ -407,7 +437,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				TextView tv = (TextView) findViewById(R.id.myCommentTV);
 				tv.setVisibility(View.VISIBLE);
 				
-				mListViews.add(myComment);
+				mListViews.add(myCommentLayout);
 
 				myAdapter = new MyPagerAdapter();
 				myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
@@ -427,9 +457,84 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	}
 
+	
+	
+	private void setMyComment() 
+	{
+		
+		Button newphotobtn = (Button) myCommentLayout.findViewById(R.id.newPhotobtn);
+		newphotobtn.setOnClickListener(new OnClickListener() {
+			int item,rating=0;
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				File tmpFile = new File(Environment.getExternalStorageDirectory(),"img"+item+"_"+rating+".jpg");
+				Uri outputFileUri = Uri.fromFile(tmpFile);
+				
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri); 
+				startActivityForResult(intent, 0); 
+			}
+		});
+	}
+	
 	@SuppressLint("NewApi")
-	private void setRestaurantInfo() {
+	private void setRestaurantInfo(int resNumber) {
 
+		
+		
+		String[] splitInfo = splitRes[resNumber].split("\t");
+		String []latlng = null;
+
+		if(splitInfo.length > 0)
+		{
+			restName = splitInfo[0];
+		}
+		if(splitInfo.length > 1)
+		{
+			imageFileURL = splitInfo[1]; // restaurant image url
+		}
+		if(splitInfo.length > 2)
+		{
+			restAddr = splitInfo[2]; // restaurant address
+		}
+		if(splitInfo.length > 3)
+		{
+			restTel = splitInfo[3]; // restaurant telephone number
+		}
+		if(splitInfo.length > 4)
+		{
+			restOpen = splitInfo[4]; // restaurant opening time
+			
+		}
+		if(splitInfo.length > 5)
+		{
+			restClosed = splitInfo[5]; // restaurant closed days
+		}
+		if(splitInfo.length > 6)
+		{
+			restWeb = splitInfo[6]; // restaurant web site
+		}
+		if(splitInfo.length > 7)
+		{
+			restDescription = splitInfo[7]; // restaurant price
+		}
+		if(splitInfo.length > 8)
+		{
+			restMenu = splitInfo[8];
+		}
+		if(splitInfo.length > 9)
+		{
+			latlng = splitInfo[9].split(",");
+			resLat = Double.parseDouble(latlng[0]);
+			resLng = Double.parseDouble(latlng[1]);
+		}
+		/*
+		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+		//tmpTv.setText(latlng[0]+" "+latlng[1]+" "+resLat+"  "+resLng);
+		tmpTv.setText(restMenu);
+		*/
+		
 		// set restaurant image
 		// imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
 		ImageView restIV = (ImageView) infoLayout
@@ -506,6 +611,186 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	}
 
+	private void setMenu() {
+		restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
+		//restMenu = "nomenu";
+		LinearLayout ll = (LinearLayout) menuLayout.findViewById(R.id.menuLayout);
+		if (restMenu != null && !restMenu.equals("nomenu")) {
+			splitMenu = restMenu.split(";");
+			// TextView tv = (TextView) findViewById(R.id.);
+			// ll.addview
+
+			// restMenu.length()
+			for (int i = 0; i < splitMenu.length; i++) {
+				String[] splitFood = splitMenu[i].split(":");
+				String food = splitFood[0];
+				String price = splitFood[1];
+				// View view = new View(null);
+				// view.setc
+				View view = View.inflate(PagerActivity.this,
+						R.layout.menu_item_layout, null);
+				TextView menuItemName = (TextView) view
+						.findViewById(R.id.menuItemName);
+				menuItemName.setText(food);
+				menuItemName.setOnTouchListener(btTouchListener);
+				menuItemName.setOnClickListener(fooditemclick);
+				TextView menuItemValue = (TextView) view
+						.findViewById(R.id.menuItemPrice);
+				menuItemValue.setText("$" + price);
+				TextView menuItemPlus = (TextView) view
+						.findViewById(R.id.menuItemPlus);
+				menuItemPlus.setOnClickListener(manuPlusMinusListener);
+				menuItemPlus.setOnTouchListener(menuItemTouchListener);
+				TextView menuItemMinus = (TextView) view
+						.findViewById(R.id.menuItemMinus);
+				menuItemMinus.setOnClickListener(manuPlusMinusListener);
+				menuItemMinus.setOnTouchListener(menuItemTouchListener);
+
+				ll.addView(view);
+
+				// View.inflate(this, R.layout.menu_item_layout, null);
+			}
+		} else {
+
+			TextView noMenu = new TextView(PagerActivity.this);
+			noMenu.setText(restMenu);
+			ll.addView(noMenu);
+		}
+
+		TextView comfirmTV = (TextView) menuLayout
+				.findViewById(R.id.confirmTV);
+		comfirmTV.setOnTouchListener(btTouchListener);
+		comfirmTV.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
+				int viewCount = ll.getChildCount();
+				
+				if(confirmFlag)
+				{
+					confirmFlag = false;
+					TextView confirmText = (TextView)v;
+					confirmText.setText("Cancel!");
+					
+					for(int i = 0;i<viewCount;i++)
+					{
+						View itemView = ll.getChildAt(i);
+						TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+						if(itemCount!=null)
+						{
+							if(itemCount.getText().toString().equals("0"))
+							{
+
+								itemView.findViewById(R.id.menuItemName).setEnabled(false);
+								itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
+								itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
+								
+								
+							}
+
+							itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
+							((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
+							itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
+							((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
+						}
+					}
+					/*
+					SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
+					String datetime = s.format(new Date());
+					for (String temp : mealItem) {
+						ContentValues values = new ContentValues();
+						values.put("restaurant", restName);
+						values.put("menu", temp);
+						values.put("date", datetime);
+						values.put("rating", 3);
+						values.put("comment", "");
+						values.put("photo", "");
+						Log.d("emo","inserting");
+						long c = db.insertOrThrow("history", null, values);
+						Log.d("emo","insert end, "+c);
+						}
+					*/
+				}
+				else
+				{
+					confirmFlag = true;
+					TextView confirmText = (TextView)v;
+					confirmText.setText("Confirm!");
+					
+					for(int i = 0;i<viewCount;i++)
+					{
+						View itemView = ll.getChildAt(i);
+						TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+						if(itemCount!=null)
+						{
+							if(itemCount.getText().toString().equals("0"))
+							{
+
+								itemView.findViewById(R.id.menuItemName).setEnabled(true);
+								itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
+								itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
+							}
+
+							itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
+							((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
+							itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
+							((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
+							
+						}
+					}
+				}
+				
+			}
+		});
+	}
+	
+	private void setComment() {
+		String restComments = "fish:5:asdasdasdasd;fish2:4:aaa;fish:1:£}£}d;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:£}£}d;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:£}£}d;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:£}£}d;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:£}£}d;";
+		//restMenu = "nomenu";
+		
+		LinearLayout ll2= (LinearLayout)commentLayout.findViewById(R.id.commentLayout);
+		
+		
+		
+		if (restComments != null && !restComments.equals(""))
+		{
+			String[] splitComments = restComments.split(";");
+			for (int i = 0; i < splitComments.length; i++) {
+				String[] splitComemntItem = splitComments[i].split(":");
+				String id = splitComemntItem[0];
+				float star = Float.parseFloat(splitComemntItem[1]);
+				String comment = splitComemntItem[2];
+				
+				
+				View view = View.inflate(PagerActivity.this,R.layout.comment_item_layout, null);
+				
+				TextView commentId = (TextView) view
+						.findViewById(R.id.commentIdTV);
+				commentId.setText(id);
+				
+				RatingBar rb = (RatingBar) view.findViewById(R.id.commentRatingBar);
+				rb.setRating(star);
+				rb.setEnabled(false);
+				
+				TextView commentCommenr = (TextView) view
+						.findViewById(R.id.commnentCommentTV);
+				commentCommenr.setText(comment);
+
+				//if(ll2!=null)
+				//{
+				ll2.addView(view);
+				
+				//}
+			}
+			
+			
+		}
+		
+
+	}
+	
 	public String getWebPage(String adresse) {
 
 		HttpClient httpClient = new DefaultHttpClient();
@@ -577,16 +862,19 @@ public class PagerActivity extends Activity implements LocationListener {
 		protected void onPostExecute(String response) {
 			// Log.i(LOG_THREAD_ACTIVITY, "HTTP RESPONSE" + response);
 
-			TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-			tmpTv.setText(response);
+			//TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+			//tmpTv.setText(response);
 			
 			Log.d("emo",response);
 			//response = "No restaurant available";
 			
 			if (!response.equals("No restaurant available")) {
 
-				String[] splitInfo = response.split("\t");
-
+				
+				splitRes = response.split("\n");
+				
+				
+/*
 				if(splitInfo.length == 11)
 				{
 				
@@ -601,7 +889,7 @@ public class PagerActivity extends Activity implements LocationListener {
 					restMenu = splitInfo[8];
 					resLat = Double.parseDouble(splitInfo[9]);
 					resLng = Double.parseDouble(splitInfo[10]);
-				}
+				}*/
 
 			} else {
 				new AlertDialog.Builder(PagerActivity.this)
@@ -619,7 +907,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			/**
 			 * set restaurant information in activity_restaurant
 			 * **/
-			setRestaurantInfo();
+			setRestaurantInfo(0);
 
 			/**
 			 * set map
@@ -630,141 +918,8 @@ public class PagerActivity extends Activity implements LocationListener {
 			 * set menu
 			 * **/
 			setMenu();
-		}
-
-		private void setMenu() {
-			restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
-			//restMenu = "nomenu";
-			LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
-			if (restMenu != null && !restMenu.equals("nomenu")) {
-				splitMenu = restMenu.split(";");
-				// TextView tv = (TextView) findViewById(R.id.);
-				// ll.addview
-
-				// restMenu.length()
-				for (int i = 0; i < splitMenu.length; i++) {
-					String[] splitFood = splitMenu[i].split(":");
-					String food = splitFood[0];
-					String price = splitFood[1];
-					// View view = new View(null);
-					// view.setc
-					View view = View.inflate(PagerActivity.this,
-							R.layout.menu_item_layout, null);
-					TextView menuItemName = (TextView) view
-							.findViewById(R.id.menuItemName);
-					menuItemName.setText(food);
-					menuItemName.setOnTouchListener(btTouchListener);
-					menuItemName.setOnClickListener(fooditemclick);
-					TextView menuItemValue = (TextView) view
-							.findViewById(R.id.menuItemPrice);
-					menuItemValue.setText("$" + price);
-					TextView menuItemPlus = (TextView) view
-							.findViewById(R.id.menuItemPlus);
-					menuItemPlus.setOnClickListener(manuPlusMinusListener);
-					menuItemPlus.setOnTouchListener(menuItemTouchListener);
-					TextView menuItemMinus = (TextView) view
-							.findViewById(R.id.menuItemMinus);
-					menuItemMinus.setOnClickListener(manuPlusMinusListener);
-					menuItemMinus.setOnTouchListener(menuItemTouchListener);
-
-					ll.addView(view);
-
-					// View.inflate(this, R.layout.menu_item_layout, null);
-				}
-			} else {
-
-				TextView noMenu = new TextView(PagerActivity.this);
-				noMenu.setText(restMenu);
-				ll.addView(noMenu);
-			}
-
-			TextView comfirmTV = (TextView) menuLayout
-					.findViewById(R.id.confirmTV);
-			comfirmTV.setOnTouchListener(btTouchListener);
-			comfirmTV.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					
-					LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
-					int viewCount = ll.getChildCount();
-					
-					if(confirmFlag)
-					{
-						confirmFlag = false;
-						TextView confirmText = (TextView)v;
-						confirmText.setText("Cancel!");
-						
-						for(int i = 0;i<viewCount;i++)
-						{
-							View itemView = ll.getChildAt(i);
-							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-							if(itemCount!=null)
-							{
-								if(itemCount.getText().toString().equals("0"))
-								{
-	
-									itemView.findViewById(R.id.menuItemName).setEnabled(false);
-									itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
-									itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
-									
-									
-								}
-	
-								itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
-								((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
-								itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
-								((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
-							}
-						}
-						/*
-						SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
-						String datetime = s.format(new Date());
-						for (String temp : mealItem) {
-							ContentValues values = new ContentValues();
-							values.put("restaurant", restName);
-							values.put("menu", temp);
-							values.put("date", datetime);
-							values.put("rating", 3);
-							values.put("comment", "");
-							values.put("photo", "");
-							Log.d("emo","inserting");
-							long c = db.insertOrThrow("history", null, values);
-							Log.d("emo","insert end, "+c);
-							}
-						*/
-					}
-					else
-					{
-						confirmFlag = true;
-						TextView confirmText = (TextView)v;
-						confirmText.setText("Confirm!");
-						
-						for(int i = 0;i<viewCount;i++)
-						{
-							View itemView = ll.getChildAt(i);
-							TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-							if(itemCount!=null)
-							{
-								if(itemCount.getText().toString().equals("0"))
-								{
-	
-									itemView.findViewById(R.id.menuItemName).setEnabled(true);
-									itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
-									itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
-								}
-	
-								itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
-								((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
-								itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
-								((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
-								
-							}
-						}
-					}
-					
-				}
-			});
+			
+			setComment();
 		}
 
 		@Override
