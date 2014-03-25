@@ -80,7 +80,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View infoLayout = null;
 	private View menuLayout = null;
 	private View mapLayout = null;
-	//private View layout3 = null;
+	private View layout3 = null;
 	private View commentLayout = null;
 	private View myCommentLayout = null;
 	
@@ -110,9 +110,14 @@ public class PagerActivity extends Activity implements LocationListener {
 	
 	
 	// flags
-	private String lastRes = null;
-	private String flag = "0";
+	//private String lastRes = null;
+	//private String flag = "0";
 	private boolean confirmFlag = true; 
+	private int resRank = 0;
+	private int delayDays = 0;
+	private int priceBelow = 100;
+	
+	
 	
 	// google map settings
 	private GoogleMap map;
@@ -144,13 +149,25 @@ public class PagerActivity extends Activity implements LocationListener {
 			}
 		}
 
-		db = helper.getWritableDatabase();
+		db = helper.getWritableDatabase();*/
 		mealItem = new ArrayList<String>();
-		*/
+				
+		
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			delayDays = bundle.getInt("delayDays");
+
+			if (bundle.size() > 1) {
+				priceBelow = bundle.getInt("priceBelow");
+			}
+		}
+		
 		
 		/** set pager layout **/
 		setPagerItem();
 
+		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+		tmpTv.setText(delayDays+" "+priceBelow);
 		/**
 		 * send deviceId, GPS and last restaurant to server using http GET
 		 * request and get restaurant information to initial
@@ -167,7 +184,11 @@ public class PagerActivity extends Activity implements LocationListener {
 		 * set map now at HttpTask
 		 * **/
 		// setMap();
-
+		
+		/**
+		 * set setComment now at HttpTask
+		 * **/
+		//setComment();
 		
 		 setMyComment();
 	}
@@ -208,7 +229,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			//alertWithSetting("請開啟定位服務",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
 		
-
+/*
 		String nowRest = lastRes;
 		if (flag.equals("2") && nowRest == null) {
 			nowRest = "0";
@@ -222,7 +243,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				e.printStackTrace();
 			}
 		}
-
+*/
 		latitude = 22.9;
 		longitude = 120.0;
 		
@@ -230,12 +251,11 @@ public class PagerActivity extends Activity implements LocationListener {
 		filePath = new File(PATH);	//判斷目錄存不存在
 		if(!filePath.exists()){
 			filePath.mkdirs();
-		}TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-	    deviceid = telephonyManager.getDeviceId();
+		}
 		*/
 		
 		//String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude + "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
-		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + 1 + "&index_end=" + 5;
+		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+5)+"&delay_days="+delayDays+"&price="+priceBelow;
 		new HttpTask().execute(url);
 	}
 	
@@ -270,16 +290,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
 		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
-		commentLayout = mInflater.inflate(R.layout.comment_layout, null);
-		//layout3 = mInflater.inflate(R.layout.layout3, null);
+		//commentLayout = mInflater.inflate(R.layout.comment_layout, null);
+		layout3 = mInflater.inflate(R.layout.layout3, null);
 		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
 		
 
 		mListViews.add(infoLayout);
 		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
-		mListViews.add(commentLayout);
-		//mListViews.add(layout3);
+		//mListViews.add(commentLayout);
+		mListViews.add(layout3);
 		//mListViews.add(myComment);
 
 		myAdapter = new MyPagerAdapter();
@@ -919,7 +939,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			 * **/
 			setMenu();
 			
-			setComment();
+			//setComment();
 		}
 
 		@Override

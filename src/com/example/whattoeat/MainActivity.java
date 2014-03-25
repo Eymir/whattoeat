@@ -67,9 +67,16 @@ public class MainActivity extends Activity {
 	 private ArrayAdapter<String> tiredListAdapter;
 	 private ArrayAdapter<String> priceListAdapter;
 	 private Context mContext;
+	 
+	 //settings
 	 private ConnectivityManager CM;
 	 private LocationManager LocationStatus;
 	
+	 //flags
+	 private int delayDays = 0;
+	 private int priceBelow = 100;
+	 
+	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,10 +92,82 @@ public class MainActivity extends Activity {
 		hbox = (LinearLayout) findViewById(R.id.historybox);
 		goimg = super.findViewById(R.id.goimg);
 		
+		
+
+		goimg.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				
+				if(CM.getActiveNetworkInfo() == null)
+				{
+					//alertWithSetting("請開啟網路服務");
+					alertWithSetting("請開啟網路服務",new Intent(Settings.ACTION_WIFI_SETTINGS));
+				}
+				else if (!(LocationStatus.isProviderEnabled(LocationManager.GPS_PROVIDER)
+						|| LocationStatus.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
+					alertWithSetting("請開啟定位服務",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+				} 
+				else
+				{				
+					Bundle bundle = new Bundle();
+					bundle.putInt("delayDays", delayDays);
+					bundle.putInt("priceBelow", priceBelow);
+					//bundle.putString("food", food);
+					//bundle.putString("restaurant", res);
+					//intent.putExtras(bundle);
+					
+					// TODO Auto-generated method stub
+					//Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent();
+					intent.setClass(MainActivity.this, PagerActivity.class);
+					intent.putExtras(bundle);
+					startActivity(intent); 
+					MainActivity.this.finish(); 
+				}
+			}
+		});
+		
+		
+		
+		db = helper.getReadableDatabase();
+		
+		Cursor cursor = db.rawQuery("select * from history order by `date` desc", null);
+		int rowsNum = cursor.getCount();
+		int item,rating;
+		String photo,title,rest;
+		Log.d("emo","get rows num"+rowsNum);
+		if (rowsNum != 0) {
+			cursor.moveToFirst();
+			for (int i = 0; i < rowsNum; i++) {
+				item = cursor.getInt(0);
+				rest = cursor.getString(2);
+				title = cursor.getString(3);
+				photo = cursor.getString(4);
+				rating = cursor.getInt(5);
+				addHist(item,rest,title,photo,rating);
+				Log.d("emo",title+"    "+rest);
+				if (photo != null)
+					Log.d("emo","photo "+photo);
+				cursor.moveToNext();
+			}
+		}
+		cursor.close();
+		
+	
+		//addHist(R.drawable.test1);
+		//addHist(R.drawable.test2);
+		//addHist(R.drawable.test3);
+		//addHist(R.drawable.test4);
+	}
+	
+	private void setFilterLayout()
+	{
 		optbtn = (TextView) super.findViewById(R.id.optionbtn);
 		
 
-	
+		
 		optbtn.setOnTouchListener(btTouchListener);
 		optbtn.setOnClickListener(new OnClickListener() {
 			
@@ -126,7 +205,28 @@ public class MainActivity extends Activity {
 		            @Override
 		            public void onItemSelected(AdapterView<?> arg0, View arg1,int position, long arg3) {
 		               //Toast.makeText(mContext, "你選的是"+tiredList[position], Toast.LENGTH_SHORT).show();
+		            	switch(position)
+		            	{
+			            	case 0:
+			            		delayDays = 1;
+			            		break;
+			            	case 1:
+			            		delayDays = 3;
+			            		break;
+			            	case 2:
+			            		delayDays = 7;
+			            		break;
+			            	case 3:
+			            		delayDays = 30;
+			            		break;
+			            	case 4:
+			            		delayDays = 0;
+			            		break;
+			            	default:
+			            		break;
 
+		            	}
+		            	
 		            }
 		            @Override
 		            public void onNothingSelected(AdapterView<?> arg0) {
@@ -138,6 +238,27 @@ public class MainActivity extends Activity {
 		            @Override
 		            public void onItemSelected(AdapterView<?> arg0, View arg1,int position, long arg3) {
 		               //Toast.makeText(mContext, "你選的是"+priceList[position], Toast.LENGTH_SHORT).show();
+		            	switch(position)
+		            	{
+			            	case 0:
+			            		priceBelow = 100;
+			            		break;
+			            	case 1:
+			            		priceBelow = 300;
+			            		break;
+			            	case 2:
+			            		priceBelow = 500;
+			            		break;
+			            	case 3:
+			            		priceBelow = 1000;
+			            		break;
+			            	case 4:
+			            		priceBelow = 999999;
+			            		break;
+			            	default:
+			            		break;
+
+		            	}
 
 		            }
 		            @Override
@@ -180,70 +301,6 @@ public class MainActivity extends Activity {
 				db.close();*/
 			}
 		}); 
-
-		goimg.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				
-				if(CM.getActiveNetworkInfo() == null)
-				{
-					//alertWithSetting("請開啟網路服務");
-					alertWithSetting("請開啟網路服務",new Intent(Settings.ACTION_WIFI_SETTINGS));
-				}
-				else if (!(LocationStatus.isProviderEnabled(LocationManager.GPS_PROVIDER)
-						|| LocationStatus.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
-					alertWithSetting("請開啟定位服務",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-				} 
-				else
-				{				
-					// TODO Auto-generated method stub
-					//Toast.makeText(getApplicationContext(), "get img", Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent();
-					intent.setClass(MainActivity.this, PagerActivity.class);
-					startActivity(intent); 
-					MainActivity.this.finish(); 
-				}
-			}
-		});
-		
-		
-		
-		db = helper.getReadableDatabase();
-		
-		Cursor cursor = db.rawQuery("select * from history order by `date` desc", null);
-		int rowsNum = cursor.getCount();
-		int item,rating;
-		String photo,title,rest;
-		Log.d("emo","get rows num"+rowsNum);
-		if (rowsNum != 0) {
-			cursor.moveToFirst();
-			for (int i = 0; i < rowsNum; i++) {
-				item = cursor.getInt(0);
-				rest = cursor.getString(2);
-				title = cursor.getString(3);
-				photo = cursor.getString(4);
-				rating = cursor.getInt(5);
-				addHist(item,rest,title,photo,rating);
-				Log.d("emo",title+"    "+rest);
-				if (photo != null)
-					Log.d("emo","photo "+photo);
-				cursor.moveToNext();
-			}
-		}
-		cursor.close();
-		
-	
-		//addHist(R.drawable.test1);
-		//addHist(R.drawable.test2);
-		//addHist(R.drawable.test3);
-		//addHist(R.drawable.test4);
-	}
-	
-	private void setFilterLayout()
-	{
-		
 		
 		
 	}
