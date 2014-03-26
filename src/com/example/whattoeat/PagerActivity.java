@@ -5,8 +5,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,14 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -68,7 +62,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.MediaStore;
-import android.provider.Settings;
+
 
 @SuppressLint("NewApi")
 public class PagerActivity extends Activity implements LocationListener {
@@ -80,7 +74,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View infoLayout = null;
 	private View menuLayout = null;
 	private View mapLayout = null;
-	private View layout3 = null;
+	//private View layout3 = null;
 	private View commentLayout = null;
 	private View myCommentLayout = null;
 	
@@ -116,6 +110,9 @@ public class PagerActivity extends Activity implements LocationListener {
 	private int resRank = 0;
 	private int delayDays = 0;
 	private int priceBelow = 100;
+	
+	private final int numberOfResPerTime = 5;
+	
 	
 	
 	
@@ -165,9 +162,11 @@ public class PagerActivity extends Activity implements LocationListener {
 		
 		/** set pager layout **/
 		setPagerItem();
-
-		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-		tmpTv.setText(delayDays+" "+priceBelow);
+		
+		/** set buttons  **/
+		setButton();
+		
+		
 		/**
 		 * send deviceId, GPS and last restaurant to server using http GET
 		 * request and get restaurant information to initial
@@ -190,7 +189,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		 * **/
 		//setComment();
 		
-		 setMyComment();
+		 //setMyComment();
 	}
 
 	private void locationServiceInitial() {
@@ -255,12 +254,244 @@ public class PagerActivity extends Activity implements LocationListener {
 		*/
 		
 		//String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude + "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
-		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+5)+"&delay_days="+delayDays+"&price="+priceBelow;
+		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
 		new HttpTask().execute(url);
 	}
 	
 	
+	private void setButton()
+	{
+		// set restart
+				TextView restartTV = (TextView) this.findViewById(R.id.restartTV);
 
+				restartTV.setOnTouchListener(btTouchListener);
+				restartTV.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						
+						resRank++;
+						if( resRank % numberOfResPerTime != 0)
+						{
+							if(splitRes.length > (resRank%numberOfResPerTime))
+							{
+								setRestaurantInfo();
+								setMap();
+								setMenu();
+								setMyComment();
+								setComment();
+							}
+							else
+							{
+								alert("¨S¦³¿ï¶µ¤F");
+								resRank--;
+							}
+						}
+						else
+						{
+							String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
+							new HttpTask().execute(url);
+						}
+						/*
+						TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+						tmpTv.setText(resRank+"");
+						*/
+						
+						/*
+						Intent intent = new Intent();
+						Bundle bundle = new Bundle();
+						// restName = "XD ¿ß¿ßÁç";
+						bundle.putString("flag", "1");
+						intent.putExtras(bundle);
+
+						intent.setClass(PagerActivity.this, PagerActivity.class);
+						startActivity(intent);
+						PagerActivity.this.finish();
+		*/
+					}
+				});
+
+				// set last one
+				TextView backTV = (TextView) this.findViewById(R.id.backTV);
+				backTV.setOnTouchListener(btTouchListener);
+
+				backTV.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						
+						
+						//resRank--;
+						if( resRank % numberOfResPerTime != 0)
+						{
+							resRank--;
+							
+							setRestaurantInfo();
+							setMap();
+							setMenu();
+							setMyComment();
+							setComment();
+							
+						}
+						else
+						{
+							if(resRank!=0)
+							{
+								resRank--;
+								String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
+								new HttpTask().execute(url);
+							}
+							else
+							{
+								alert("¦^¨ì³Ìªìªº¿ï¶µ¤F");
+								
+							}
+						}
+						/*
+						TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+						tmpTv.setText(resRank+"");
+						*/
+						
+						
+						
+						
+						/*
+						Intent intent = new Intent();
+						Bundle bundle = new Bundle();
+
+						// restName = "¿ß¿ßÁç";
+						bundle.putString("lastRes", restName);
+						bundle.putString("flag", "2");
+						intent.putExtras(bundle);
+						intent.setClass(PagerActivity.this, PagerActivity.class);
+						startActivity(intent);
+						PagerActivity.this.finish();
+		*/
+					}
+				});
+
+				TextView leaveTV = (TextView) this.findViewById(R.id.leaveTV);
+				leaveTV.setOnTouchListener(btTouchListener);
+				leaveTV.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						TextView tv = (TextView) findViewById(R.id.myCommentTV);
+						tv.setVisibility(View.VISIBLE);
+						
+						mListViews.add(myCommentLayout);
+
+						myAdapter = new MyPagerAdapter();
+						myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
+						myViewPager.setAdapter(myAdapter);
+						myViewPager.setCurrentItem(4);
+						//mListViews.add(myComment);
+						/*
+						 * Intent intent = new Intent(); Bundle bundle = new Bundle();
+						 * //restName = "¿ß¿ßÁç"; bundle.putString("lastRes", restName);
+						 * bundle.putString("flag", "2"); intent.putExtras(bundle);
+						 * intent.setClass(PagerActivity.this, PagerActivity.class);
+						 * startActivity(intent); PagerActivity.this.finish();
+						 */
+
+					}
+				});
+		
+				
+				//set confirm
+				TextView confirmTV = (TextView) menuLayout
+						.findViewById(R.id.confirmTV);
+				confirmTV.setOnTouchListener(btTouchListener);
+				confirmTV.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						
+						LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
+						int viewCount = ll.getChildCount();
+						
+						if(confirmFlag)
+						{
+							confirmFlag = false;
+							TextView confirmText = (TextView)v;
+							confirmText.setText("Cancel!");
+							
+							for(int i = 0;i<viewCount;i++)
+							{
+								View itemView = ll.getChildAt(i);
+								TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+								if(itemCount!=null)
+								{
+									if(itemCount.getText().toString().equals("0"))
+									{
+
+										itemView.findViewById(R.id.menuItemName).setEnabled(false);
+										itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
+										itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
+										
+										
+									}
+
+									itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
+									((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
+									itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
+									((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
+								}
+							}
+							/*
+							SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
+							String datetime = s.format(new Date());
+							for (String temp : mealItem) {
+								ContentValues values = new ContentValues();
+								values.put("restaurant", restName);
+								values.put("menu", temp);
+								values.put("date", datetime);
+								values.put("rating", 3);
+								values.put("comment", "");
+								values.put("photo", "");
+								Log.d("emo","inserting");
+								long c = db.insertOrThrow("history", null, values);
+								Log.d("emo","insert end, "+c);
+								}
+							*/
+						}
+						else
+						{
+							confirmFlag = true;
+							TextView confirmText = (TextView)v;
+							confirmText.setText("Confirm!");
+							
+							for(int i = 0;i<viewCount;i++)
+							{
+								View itemView = ll.getChildAt(i);
+								TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+								if(itemCount!=null)
+								{
+									if(itemCount.getText().toString().equals("0"))
+									{
+
+										itemView.findViewById(R.id.menuItemName).setEnabled(true);
+										itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
+										itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
+									}
+
+									itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
+									((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
+									itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
+									((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
+									
+								}
+							}
+						}
+					}
+				});
+
+	}
+	
+	
 	private void setMap() {
 		// set map
 
@@ -290,16 +521,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
 		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
-		//commentLayout = mInflater.inflate(R.layout.comment_layout, null);
-		layout3 = mInflater.inflate(R.layout.layout3, null);
+		commentLayout = mInflater.inflate(R.layout.comment_layout, null);
+		//layout3 = mInflater.inflate(R.layout.layout3, null);
 		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
 		
 
 		mListViews.add(infoLayout);
 		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
-		//mListViews.add(commentLayout);
-		mListViews.add(layout3);
+		mListViews.add(commentLayout);
+		//mListViews.add(layout3);
 		//mListViews.add(myComment);
 
 		myAdapter = new MyPagerAdapter();
@@ -402,78 +633,6 @@ public class PagerActivity extends Activity implements LocationListener {
 			}
 		});
 
-		// set restart
-		TextView restartTV = (TextView) this.findViewById(R.id.restartTV);
-
-		restartTV.setOnTouchListener(btTouchListener);
-		restartTV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				/*
-				Intent intent = new Intent();
-				Bundle bundle = new Bundle();
-				// restName = "XD ¿ß¿ßÁç";
-				bundle.putString("flag", "1");
-				intent.putExtras(bundle);
-
-				intent.setClass(PagerActivity.this, PagerActivity.class);
-				startActivity(intent);
-				PagerActivity.this.finish();
-*/
-			}
-		});
-
-		// set last one
-		TextView backTV = (TextView) this.findViewById(R.id.backTV);
-		backTV.setOnTouchListener(btTouchListener);
-
-		backTV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				/*
-				Intent intent = new Intent();
-				Bundle bundle = new Bundle();
-
-				// restName = "¿ß¿ßÁç";
-				bundle.putString("lastRes", restName);
-				bundle.putString("flag", "2");
-				intent.putExtras(bundle);
-				intent.setClass(PagerActivity.this, PagerActivity.class);
-				startActivity(intent);
-				PagerActivity.this.finish();
-*/
-			}
-		});
-
-		TextView leaveTV = (TextView) this.findViewById(R.id.leaveTV);
-		leaveTV.setOnTouchListener(btTouchListener);
-		leaveTV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				TextView tv = (TextView) findViewById(R.id.myCommentTV);
-				tv.setVisibility(View.VISIBLE);
-				
-				mListViews.add(myCommentLayout);
-
-				myAdapter = new MyPagerAdapter();
-				myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
-				myViewPager.setAdapter(myAdapter);
-				myViewPager.setCurrentItem(4);
-				//mListViews.add(myComment);
-				/*
-				 * Intent intent = new Intent(); Bundle bundle = new Bundle();
-				 * //restName = "¿ß¿ßÁç"; bundle.putString("lastRes", restName);
-				 * bundle.putString("flag", "2"); intent.putExtras(bundle);
-				 * intent.setClass(PagerActivity.this, PagerActivity.class);
-				 * startActivity(intent); PagerActivity.this.finish();
-				 */
-
-			}
-		});
 
 	}
 
@@ -499,135 +658,144 @@ public class PagerActivity extends Activity implements LocationListener {
 	}
 	
 	@SuppressLint("NewApi")
-	private void setRestaurantInfo(int resNumber) {
-
+	private void setRestaurantInfo() {
 		
-		
-		String[] splitInfo = splitRes[resNumber].split("\t");
-		String []latlng = null;
+		String[] splitInfo = null;
+		//if(splitRes.length > (resRank%numberOfResPerTime))
+		//{
+			splitInfo = splitRes[resRank%numberOfResPerTime].split("\t");
+			String []latlng = null;
 
-		if(splitInfo.length > 0)
-		{
-			restName = splitInfo[0];
-		}
-		if(splitInfo.length > 1)
-		{
-			imageFileURL = splitInfo[1]; // restaurant image url
-		}
-		if(splitInfo.length > 2)
-		{
-			restAddr = splitInfo[2]; // restaurant address
-		}
-		if(splitInfo.length > 3)
-		{
-			restTel = splitInfo[3]; // restaurant telephone number
-		}
-		if(splitInfo.length > 4)
-		{
-			restOpen = splitInfo[4]; // restaurant opening time
+			if(splitInfo.length > 0)
+			{
+				restName = splitInfo[0];
+			}
+			if(splitInfo.length > 1)
+			{
+				imageFileURL = splitInfo[1]; // restaurant image url
+			}
+			if(splitInfo.length > 2)
+			{
+				restAddr = splitInfo[2]; // restaurant address
+			}
+			if(splitInfo.length > 3)
+			{
+				restTel = splitInfo[3]; // restaurant telephone number
+			}
+			if(splitInfo.length > 4)
+			{
+				restOpen = splitInfo[4]; // restaurant opening time
+				
+			}
+			if(splitInfo.length > 5)
+			{
+				restClosed = splitInfo[5]; // restaurant closed days
+			}
+			if(splitInfo.length > 6)
+			{
+				restWeb = splitInfo[6]; // restaurant web site
+			}
+			if(splitInfo.length > 7)
+			{
+				restDescription = splitInfo[7]; // restaurant price
+			}
+			if(splitInfo.length > 8)
+			{
+				restMenu = splitInfo[8];
+			}
+			if(splitInfo.length > 9)
+			{
+				latlng = splitInfo[9].split(",");
+				resLat = Double.parseDouble(latlng[0]);
+				resLng = Double.parseDouble(latlng[1]);
+			}
+			/*
+			TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+			//tmpTv.setText(latlng[0]+" "+latlng[1]+" "+resLat+"  "+resLng);
+			tmpTv.setText(restMenu);
+			*/
 			
-		}
-		if(splitInfo.length > 5)
+			// set restaurant image
+			// imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
+			ImageView restIV = (ImageView) infoLayout
+					.findViewById(R.id.restaurantImgView);
+			UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
+
+			// set restaurant name
+			// restName = "XM³Â»¶Áç";
+			TextView restNameTV = (TextView) infoLayout.findViewById(R.id.titleTV);
+			restNameTV.setText(restName);
+
+			// set restaurant address
+			// restAddr = "¥x«n¥«ªF°ÏªL´Ë¸ô¤@¬q167¸¹";
+			TextView restAddrTV = (TextView) infoLayout
+					.findViewById(R.id.addressTV);
+			restAddrTV.setText(restAddr);
+
+			// set restaurant phone #
+			// restTel = "06-2083775";
+			TextView restPhoneTV = (TextView) infoLayout.findViewById(R.id.phoneTV);
+			restPhoneTV.setText(restTel);
+
+			// set restaurant opening time
+			// restOpen = "11:00-02:00";
+			TextView restOpenTV = (TextView) infoLayout
+					.findViewById(R.id.openTimeTV);
+			restOpenTV.setText(restOpen);
+
+			// set restaurant closed days
+			// restClosed = "µL";
+			TextView restCloseTV = (TextView) infoLayout
+					.findViewById(R.id.closedDaysTV);
+			restCloseTV.setText(restClosed);
+
+			// set restaurant web site
+			// restWeb = "http://www.xm.512g.com";
+			TextView restWebTV = (TextView) infoLayout.findViewById(R.id.webTV);
+			restWebTV.setText(restWeb);
+			restWebTV.setTextColor(Color.BLUE);
+			restWebTV.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					Intent ie = new Intent(Intent.ACTION_VIEW, Uri.parse(restWeb));
+					startActivity(ie);
+
+					/*
+					 * Intent intent = new Intent();
+					 * 
+					 * Bundle bundle = new Bundle(); bundle.putString("restWeb",
+					 * restWeb); intent.putExtras(bundle);
+					 * intent.setClass(PagerActivity.this, WebViewActivity.class);
+					 * startActivity(intent);
+					 */
+					// PagerActivity.this.finish();
+				}
+			});
+
+			// set restaurant price
+			// restPrice = "¥­¤é¤ÈÀ\$239\n¥­¤é±ßÀ\¤Î°²¤é¥þ¤Ñ$259";
+			// TextView restPriceTV = (TextView)
+			// infoLayout.findViewById(R.id.priceTV);
+			// restPriceTV.setText(restPrice);
+
+			// set restaurant rating
+			RatingBar smallRatingBar = (RatingBar) infoLayout
+					.findViewById(R.id.ratingBar1);
+			//smallRatingBar.setRating(5);
+			// smallRatingBar.setEnabled(false);
+
+			TextView restDescripTV = (TextView) infoLayout
+					.findViewById(R.id.descriptionTV);
+			restDescripTV.setText(restDescription);
+		/*}
+		else
 		{
-			restClosed = splitInfo[5]; // restaurant closed days
+			alert("¨S¦³¿ï¶µ¤F!!");
 		}
-		if(splitInfo.length > 6)
-		{
-			restWeb = splitInfo[6]; // restaurant web site
-		}
-		if(splitInfo.length > 7)
-		{
-			restDescription = splitInfo[7]; // restaurant price
-		}
-		if(splitInfo.length > 8)
-		{
-			restMenu = splitInfo[8];
-		}
-		if(splitInfo.length > 9)
-		{
-			latlng = splitInfo[9].split(",");
-			resLat = Double.parseDouble(latlng[0]);
-			resLng = Double.parseDouble(latlng[1]);
-		}
-		/*
-		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-		//tmpTv.setText(latlng[0]+" "+latlng[1]+" "+resLat+"  "+resLng);
-		tmpTv.setText(restMenu);
 		*/
 		
-		// set restaurant image
-		// imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
-		ImageView restIV = (ImageView) infoLayout
-				.findViewById(R.id.restaurantImgView);
-		UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
-
-		// set restaurant name
-		// restName = "XM³Â»¶Áç";
-		TextView restNameTV = (TextView) infoLayout.findViewById(R.id.titleTV);
-		restNameTV.setText(restName);
-
-		// set restaurant address
-		// restAddr = "¥x«n¥«ªF°ÏªL´Ë¸ô¤@¬q167¸¹";
-		TextView restAddrTV = (TextView) infoLayout
-				.findViewById(R.id.addressTV);
-		restAddrTV.setText(restAddr);
-
-		// set restaurant phone #
-		// restTel = "06-2083775";
-		TextView restPhoneTV = (TextView) infoLayout.findViewById(R.id.phoneTV);
-		restPhoneTV.setText(restTel);
-
-		// set restaurant opening time
-		// restOpen = "11:00-02:00";
-		TextView restOpenTV = (TextView) infoLayout
-				.findViewById(R.id.openTimeTV);
-		restOpenTV.setText(restOpen);
-
-		// set restaurant closed days
-		// restClosed = "µL";
-		TextView restCloseTV = (TextView) infoLayout
-				.findViewById(R.id.closedDaysTV);
-		restCloseTV.setText(restClosed);
-
-		// set restaurant web site
-		// restWeb = "http://www.xm.512g.com";
-		TextView restWebTV = (TextView) infoLayout.findViewById(R.id.webTV);
-		restWebTV.setText(restWeb);
-		restWebTV.setTextColor(Color.BLUE);
-		restWebTV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				Intent ie = new Intent(Intent.ACTION_VIEW, Uri.parse(restWeb));
-				startActivity(ie);
-
-				/*
-				 * Intent intent = new Intent();
-				 * 
-				 * Bundle bundle = new Bundle(); bundle.putString("restWeb",
-				 * restWeb); intent.putExtras(bundle);
-				 * intent.setClass(PagerActivity.this, WebViewActivity.class);
-				 * startActivity(intent);
-				 */
-				// PagerActivity.this.finish();
-			}
-		});
-
-		// set restaurant price
-		// restPrice = "¥­¤é¤ÈÀ\$239\n¥­¤é±ßÀ\¤Î°²¤é¥þ¤Ñ$259";
-		// TextView restPriceTV = (TextView)
-		// infoLayout.findViewById(R.id.priceTV);
-		// restPriceTV.setText(restPrice);
-
-		// set restaurant rating
-		RatingBar smallRatingBar = (RatingBar) infoLayout
-				.findViewById(R.id.ratingBar1);
-		// smallRatingBar.setEnabled(false);
-
-		TextView restDescripTV = (TextView) infoLayout
-				.findViewById(R.id.descriptionTV);
-		restDescripTV.setText(restDescription);
 
 	}
 
@@ -635,6 +803,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		restMenu = "©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;©@­ùª£ªwÄÑ:80;³Â»¶ª£ªwÄÑ:70;®õ¦¡ª£ªwÄÑ:65;©@­ù³Jª£¶º:80;³Â»¶ª£¶º:90;";
 		//restMenu = "nomenu";
 		LinearLayout ll = (LinearLayout) menuLayout.findViewById(R.id.menuLayout);
+		ll.removeAllViews();
 		if (restMenu != null && !restMenu.equals("nomenu")) {
 			splitMenu = restMenu.split(";");
 			// TextView tv = (TextView) findViewById(R.id.);
@@ -677,93 +846,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			ll.addView(noMenu);
 		}
 
-		TextView comfirmTV = (TextView) menuLayout
-				.findViewById(R.id.confirmTV);
-		comfirmTV.setOnTouchListener(btTouchListener);
-		comfirmTV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				
-				LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
-				int viewCount = ll.getChildCount();
-				
-				if(confirmFlag)
-				{
-					confirmFlag = false;
-					TextView confirmText = (TextView)v;
-					confirmText.setText("Cancel!");
-					
-					for(int i = 0;i<viewCount;i++)
-					{
-						View itemView = ll.getChildAt(i);
-						TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-						if(itemCount!=null)
-						{
-							if(itemCount.getText().toString().equals("0"))
-							{
-
-								itemView.findViewById(R.id.menuItemName).setEnabled(false);
-								itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
-								itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
-								
-								
-							}
-
-							itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
-							((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
-							itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
-							((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
-						}
-					}
-					/*
-					SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
-					String datetime = s.format(new Date());
-					for (String temp : mealItem) {
-						ContentValues values = new ContentValues();
-						values.put("restaurant", restName);
-						values.put("menu", temp);
-						values.put("date", datetime);
-						values.put("rating", 3);
-						values.put("comment", "");
-						values.put("photo", "");
-						Log.d("emo","inserting");
-						long c = db.insertOrThrow("history", null, values);
-						Log.d("emo","insert end, "+c);
-						}
-					*/
-				}
-				else
-				{
-					confirmFlag = true;
-					TextView confirmText = (TextView)v;
-					confirmText.setText("Confirm!");
-					
-					for(int i = 0;i<viewCount;i++)
-					{
-						View itemView = ll.getChildAt(i);
-						TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-						if(itemCount!=null)
-						{
-							if(itemCount.getText().toString().equals("0"))
-							{
-
-								itemView.findViewById(R.id.menuItemName).setEnabled(true);
-								itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
-								itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
-							}
-
-							itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
-							((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
-							itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
-							((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
-							
-						}
-					}
-				}
-				
-			}
-		});
+		
 	}
 	
 	private void setComment() {
@@ -771,7 +854,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		//restMenu = "nomenu";
 		
 		LinearLayout ll2= (LinearLayout)commentLayout.findViewById(R.id.commentLayout);
-		
+		ll2.removeAllViews();
 		
 		
 		if (restComments != null && !restComments.equals(""))
@@ -890,7 +973,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			
 			if (!response.equals("No restaurant available")) {
 
-				
+				response = " \n \n \n ";
 				splitRes = response.split("\n");
 				
 				
@@ -924,22 +1007,26 @@ public class PagerActivity extends Activity implements LocationListener {
 
 			}
 
+			
+		
 			/**
 			 * set restaurant information in activity_restaurant
 			 * **/
-			setRestaurantInfo(0);
-
+			setRestaurantInfo();
+	
 			/**
 			 * set map
 			 * **/
 			setMap();
-
+	
 			/**
 			 * set menu
 			 * **/
 			setMenu();
+				
+			setComment();
+			setMyComment();
 			
-			//setComment();
 		}
 
 		@Override
@@ -1067,11 +1154,16 @@ public class PagerActivity extends Activity implements LocationListener {
 				tv.setTextColor(Color.BLACK);
 				// v.setBackgroundDrawable();
 			}
+			else if(event.getAction() == MotionEvent.ACTION_CANCEL)
+			{
+				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.border));
+				tv.setTextColor(Color.BLACK);
+			}
 			// TODO Auto-generated method stub
 			return false;
 		}
 
-	};
+	};//
 
 	private OnTouchListener menuItemTouchListener = new OnTouchListener() {
 
@@ -1088,6 +1180,11 @@ public class PagerActivity extends Activity implements LocationListener {
 				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.border));
 				tv.setTextColor(Color.BLACK);
 				// v.setBackgroundDrawable();
+			}
+			else if(event.getAction() == MotionEvent.ACTION_CANCEL)
+			{
+				v.setBackgroundDrawable(getResources().getDrawable(R.drawable.border));
+				tv.setTextColor(Color.BLACK);
 			}
 			// TODO Auto-generated method stub
 			return false;
@@ -1170,7 +1267,19 @@ public class PagerActivity extends Activity implements LocationListener {
 		// TODO Auto-generated method stub
 
 	}
-
+	private void alert(String message)
+	{
+		new AlertDialog.Builder(PagerActivity.this)
+		.setTitle(message)
+		.setPositiveButton("½T©w",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int which) {
+						
+						// continue with delete
+					}
+				}).show();
+	}
 	@Override
 	public void onProviderDisabled(String arg0) {
 		// TODO Auto-generated method stub
@@ -1189,3 +1298,4 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	}
 }
+
