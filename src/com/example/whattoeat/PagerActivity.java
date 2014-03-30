@@ -12,11 +12,15 @@ import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Bitmap.Config;
 import android.view.Menu;
 
 import java.io.File;
@@ -55,6 +59,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -82,11 +87,12 @@ public class PagerActivity extends Activity implements LocationListener {
 	// server
 	//private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
 	//private String baseUrl = "http://192.168.1.116/wteSuggest.php?";
-	private String baseUrl = "http://140.116.86.212/api/query.php?";
+	private String baseUrl = "http://140.116.86.212/api/";
 	
 	
 	
 	// restaurant info
+	private int restId = 0;
 	private String restName = null; // restaurant name
 	private String imageFileURL = null; // restaurant image url
 	private String restAddr = null; // restaurant address
@@ -100,7 +106,12 @@ public class PagerActivity extends Activity implements LocationListener {
 	private Double resLng = null;
 	private String[] splitMenu;
 	private String[] splitRes = null;
+	private String restComments = null;
 	
+	
+	//my commet
+	private String myComment = null;
+	private float myRate = 0;
 	
 	
 	// flags
@@ -112,10 +123,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	private int priceBelow = 100;
 	
 	private final int numberOfResPerTime = 5;
-	
-	
-	
-	
+
 	// google map settings
 	private GoogleMap map;
 
@@ -124,11 +132,12 @@ public class PagerActivity extends Activity implements LocationListener {
 	private Double longitude;
 	private Double latitude;
 
+	
 	private ArrayList<String> mealItem;
 	DBHelper helper = new DBHelper(PagerActivity.this);
 	SQLiteDatabase db;
 
-	
+	private String  SDPATH = Environment.getExternalStorageDirectory().getPath() + "//";
 
 	
 	@Override
@@ -185,11 +194,10 @@ public class PagerActivity extends Activity implements LocationListener {
 		// setMap();
 		
 		/**
-		 * set setComment now at HttpTask
+		 * set setComment now at HttpTaskComment
 		 * **/
-		//setComment();
 		
-		 //setMyComment();
+
 	}
 
 	private void locationServiceInitial() {
@@ -215,7 +223,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		// device id
 		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		deviceId = telephonyManager.getDeviceId();
-		
+		//deviceId = "6642"; 
 
 		// GPS
 		LocationManager status = (LocationManager) (this
@@ -227,34 +235,19 @@ public class PagerActivity extends Activity implements LocationListener {
 		} else {	
 			//alertWithSetting("請開啟定位服務",new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 		}
-		
-/*
-		String nowRest = lastRes;
-		if (flag.equals("2") && nowRest == null) {
-			nowRest = "0";
-		}
 
-		if (nowRest != null) {
-			try {
-				nowRest = URLEncoder.encode(nowRest, "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-*/
 		latitude = 22.9;
 		longitude = 120.0;
-		
-		/*
-		filePath = new File(PATH);	//判斷目錄存不存在
+
+		File filePath = new File(SDPATH+"whattoeat");	//判斷目錄存不存在
 		if(!filePath.exists()){
 			filePath.mkdirs();
+			//alert("!!!!");
 		}
-		*/
 		
-		//String url = baseUrl + "deviceId=" + deviceId + "&lat=" + latitude + "&lng=" + longitude + "&lastRes=" + nowRest + "&flag=" + flag;
-		String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
+		
+		
+		String url = baseUrl+"query.php?" + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank) + "&index_end=" + (resRank+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
 		new HttpTask().execute(url);
 	}
 	
@@ -262,185 +255,156 @@ public class PagerActivity extends Activity implements LocationListener {
 	private void setButton()
 	{
 		// set restart
-				TextView restartTV = (TextView) this.findViewById(R.id.restartTV);
+		TextView restartTV = (TextView) this.findViewById(R.id.restartTV);
 
-				restartTV.setOnTouchListener(btTouchListener);
-				restartTV.setOnClickListener(new OnClickListener() {
+		restartTV.setOnTouchListener(btTouchListener);
+		restartTV.setOnClickListener(new OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						
-						
-						resRank++;
-						if( resRank % numberOfResPerTime != 0)
-						{
-							if(splitRes.length > (resRank%numberOfResPerTime))
-							{
-								setRestaurantInfo();
-								setMap();
-								setMenu();
-								setMyComment();
-								setComment();
-							}
-							else
-							{
-								alert("沒有選項了");
-								resRank--;
-							}
-						}
-						else
-						{
-							String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
-							new HttpTask().execute(url);
-						}
-						/*
-						TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-						tmpTv.setText(resRank+"");
-						*/
-						
-						/*
-						Intent intent = new Intent();
-						Bundle bundle = new Bundle();
-						// restName = "XD 貓貓鍋";
-						bundle.putString("flag", "1");
-						intent.putExtras(bundle);
+		@Override
+		public void onClick(View v) 
+		{
+			resRank++;
+			if( resRank % numberOfResPerTime != 0)
+			{
+				if(splitRes.length > (resRank%numberOfResPerTime))
+				{
+					setRestaurantInfo();
+					setMap();
+					setMenu();
+					
+					
+					
+					myViewPager.setCurrentItem(0);
+					myViewPager.removeView(myCommentLayout);
+					mListViews.remove(myCommentLayout);
+					myAdapter.notifyDataSetChanged ();
+					TextView tv = (TextView) findViewById(R.id.myCommentTV);
+					tv.setVisibility(View.INVISIBLE);
 
-						intent.setClass(PagerActivity.this, PagerActivity.class);
-						startActivity(intent);
-						PagerActivity.this.finish();
-		*/
-					}
-				});
-
-				// set last one
-				TextView backTV = (TextView) this.findViewById(R.id.backTV);
-				backTV.setOnTouchListener(btTouchListener);
-
-				backTV.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						
-						
-						//resRank--;
-						if( resRank % numberOfResPerTime != 0)
-						{
-							resRank--;
-							
-							setRestaurantInfo();
-							setMap();
-							setMenu();
-							setMyComment();
-							setComment();
-							
-						}
-						else
-						{
-							if(resRank!=0)
-							{
-								resRank--;
-								String url = baseUrl + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank+1) + "&index_end=" + (resRank+1+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
-								new HttpTask().execute(url);
-							}
-							else
-							{
-								alert("回到最初的選項了");
-								
-							}
-						}
-						/*
-						TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-						tmpTv.setText(resRank+"");
-						*/
-						
-						
-						
-						
-						/*
-						Intent intent = new Intent();
-						Bundle bundle = new Bundle();
-
-						// restName = "貓貓鍋";
-						bundle.putString("lastRes", restName);
-						bundle.putString("flag", "2");
-						intent.putExtras(bundle);
-						intent.setClass(PagerActivity.this, PagerActivity.class);
-						startActivity(intent);
-						PagerActivity.this.finish();
-		*/
-					}
-				});
-
-				TextView leaveTV = (TextView) this.findViewById(R.id.leaveTV);
-				leaveTV.setOnTouchListener(btTouchListener);
-				leaveTV.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						
-						TextView tv = (TextView) findViewById(R.id.myCommentTV);
-						tv.setVisibility(View.VISIBLE);
-						
-						mListViews.add(myCommentLayout);
-
-						myAdapter = new MyPagerAdapter();
-						myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
-						myViewPager.setAdapter(myAdapter);
-						myViewPager.setCurrentItem(4);
-						//mListViews.add(myComment);
-						/*
-						 * Intent intent = new Intent(); Bundle bundle = new Bundle();
-						 * //restName = "貓貓鍋"; bundle.putString("lastRes", restName);
-						 * bundle.putString("flag", "2"); intent.putExtras(bundle);
-						 * intent.setClass(PagerActivity.this, PagerActivity.class);
-						 * startActivity(intent); PagerActivity.this.finish();
-						 */
-
-					}
-				});
-		
+				}
+				else
+				{
+					alert("沒有選項了");
+					resRank--;
+				}
+			}
+			else
+			{
+				String url = baseUrl+"query.php?" + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank) + "&index_end=" + (resRank+numberOfResPerTime)+"&delay_days="+delayDays+"&price="+priceBelow;
+				new HttpTask().execute(url);
 				
-				//set confirm
-				TextView confirmTV = (TextView) menuLayout
-						.findViewById(R.id.confirmTV);
-				confirmTV.setOnTouchListener(btTouchListener);
-				confirmTV.setOnClickListener(new OnClickListener() {
+				myViewPager.setCurrentItem(0);
+				myViewPager.removeView(myCommentLayout);
+				mListViews.remove(myCommentLayout);
+				myAdapter.notifyDataSetChanged ();
+				TextView tv = (TextView) findViewById(R.id.myCommentTV);
+				tv.setVisibility(View.INVISIBLE);
+			}
+		}});
 
-					@Override
-					public void onClick(View v) {
+		// set last one
+		TextView backTV = (TextView) this.findViewById(R.id.backTV);
+		backTV.setOnTouchListener(btTouchListener);
+
+		backTV.setOnClickListener(new OnClickListener() {
+
+		@Override
+		public void onClick(View v) 
+		{
+			if( resRank % numberOfResPerTime != 0)
+			{
+				resRank--;
+				setRestaurantInfo();
+				setMap();
+				setMenu();
+				
+				myViewPager.setCurrentItem(0);
+				myViewPager.removeView(myCommentLayout);
+				mListViews.remove(myCommentLayout);
+				myAdapter.notifyDataSetChanged ();
+				TextView tv = (TextView) findViewById(R.id.myCommentTV);
+				tv.setVisibility(View.INVISIBLE);
+			}
+			else
+			{
+				if(resRank!=0)
+				{
+					String url = baseUrl+"query.php?" + "user_id=" + deviceId + "&latitude=" + latitude + "&longitude=" + longitude + "&index_start=" + (resRank-numberOfResPerTime) + "&index_end=" + (resRank)+"&delay_days="+delayDays+"&price="+priceBelow;
+					new HttpTask().execute(url);
+					resRank--;
+					
+					myViewPager.setCurrentItem(0);
+					myViewPager.removeView(myCommentLayout);
+					mListViews.remove(myCommentLayout);
+					myAdapter.notifyDataSetChanged ();
+					TextView tv = (TextView) findViewById(R.id.myCommentTV);
+					tv.setVisibility(View.INVISIBLE);
+				}
+				else
+				{
+					alert("回到最初的選項了");
+				}
+			}
+		}});
+
+		TextView leaveTV = (TextView) this.findViewById(R.id.leaveTV);
+		leaveTV.setOnTouchListener(btTouchListener);
+		leaveTV.setOnClickListener(new OnClickListener() {
+			
+		@Override
+		public void onClick(View v) 
+		{
+			
+			TextView tv = (TextView) findViewById(R.id.myCommentTV);
+			tv.setVisibility(View.VISIBLE);
+			if(!mListViews.contains(myCommentLayout))
+			{
+				mListViews.add(myCommentLayout);
+	
+				//myAdapter = new MyPagerAdapter();
+				//myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
+				myViewPager.setAdapter(myAdapter);
+				myViewPager.setCurrentItem(4);
+				setMyComment();
+			}
+		}});
+		
+		//set confirm
+		TextView confirmTV = (TextView) menuLayout.findViewById(R.id.confirmTV);
+		confirmTV.setOnTouchListener(btTouchListener);
+		confirmTV.setOnClickListener(new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			
+			LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
+			int viewCount = ll.getChildCount();
 						
-						LinearLayout ll = (LinearLayout) findViewById(R.id.menuLayout);
-						int viewCount = ll.getChildCount();
-						
-						if(confirmFlag)
-						{
-							confirmFlag = false;
-							TextView confirmText = (TextView)v;
-							confirmText.setText("Cancel!");
+			if(confirmFlag)
+			{
+				confirmFlag = false;
+				TextView confirmText = (TextView)v;
+				confirmText.setText("Cancel!");
 							
-							for(int i = 0;i<viewCount;i++)
-							{
-								View itemView = ll.getChildAt(i);
-								TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-								if(itemCount!=null)
-								{
-									if(itemCount.getText().toString().equals("0"))
-									{
+				for(int i = 0;i<viewCount;i++)
+				{
+					View itemView = ll.getChildAt(i);
+					TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+					if(itemCount!=null)
+					{
+						if(itemCount.getText().toString().equals("0"))
+						{
+							itemView.findViewById(R.id.menuItemName).setEnabled(false);
+							itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
+							itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
+						}
 
-										itemView.findViewById(R.id.menuItemName).setEnabled(false);
-										itemView.findViewById(R.id.menuItemPrice).setEnabled(false);
-										itemView.findViewById(R.id.menuItemNumber).setEnabled(false);
-										
-										
-									}
-
-									itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
-									((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
-									itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
-									((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
-								}
-							}
+						itemView.findViewById(R.id.menuItemPlus).setEnabled(false);
+						((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.GRAY);
+						itemView.findViewById(R.id.menuItemMinus).setEnabled(false);
+						((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.GRAY);
+					}
+				}
 							/*
 							SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmm");
 							String datetime = s.format(new Date());
@@ -457,38 +421,79 @@ public class PagerActivity extends Activity implements LocationListener {
 								Log.d("emo","insert end, "+c);
 								}
 							*/
-						}
-						else
-						{
-							confirmFlag = true;
-							TextView confirmText = (TextView)v;
-							confirmText.setText("Confirm!");
+			}
+			else
+			{
+				confirmFlag = true;
+				TextView confirmText = (TextView)v;
+				confirmText.setText("Confirm!");
 							
-							for(int i = 0;i<viewCount;i++)
-							{
-								View itemView = ll.getChildAt(i);
-								TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
-								if(itemCount!=null)
-								{
-									if(itemCount.getText().toString().equals("0"))
-									{
-
-										itemView.findViewById(R.id.menuItemName).setEnabled(true);
-										itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
-										itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
-									}
-
-									itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
-									((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
-									itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
-									((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
-									
-								}
-							}
+				for(int i = 0;i<viewCount;i++)
+				{
+					View itemView = ll.getChildAt(i);
+					TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+					if(itemCount!=null)
+					{
+						if(itemCount.getText().toString().equals("0"))
+						{
+							itemView.findViewById(R.id.menuItemName).setEnabled(true);
+							itemView.findViewById(R.id.menuItemPrice).setEnabled(true);
+							itemView.findViewById(R.id.menuItemNumber).setEnabled(true);
 						}
-					}
-				});
 
+						itemView.findViewById(R.id.menuItemPlus).setEnabled(true);
+						((TextView) itemView.findViewById(R.id.menuItemPlus)).setTextColor(Color.BLACK);
+						itemView.findViewById(R.id.menuItemMinus).setEnabled(true);
+						((TextView) itemView.findViewById(R.id.menuItemMinus)).setTextColor(Color.BLACK);
+					}
+				}
+			}
+		}});
+
+				
+		//set new photo
+		Button newphotobtn = (Button) myCommentLayout.findViewById(R.id.newPhotobtn);
+		newphotobtn.setOnTouchListener(btTouchListener);
+		newphotobtn.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			File tmpFile = new File(Environment.getExternalStorageDirectory(),"whattoeat/"+restId+".jpg");
+			Uri outputFileUri = Uri.fromFile(tmpFile);
+						
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri); 
+			startActivityForResult(intent, 0); 
+			setMyComment();
+		}});
+		
+		
+		// send comment
+		Button sendComment = (Button) myCommentLayout.findViewById(R.id.backbtn);
+		sendComment.setOnTouchListener(btTouchListener);
+		sendComment.setOnClickListener(new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+
+			RatingBar bar = (RatingBar) myCommentLayout.findViewById(R.id.ratingBar1);
+			myRate = bar.getRating();
+			
+			EditText et = (EditText) myCommentLayout.findViewById(R.id.editText1);
+			myComment = et.getText().toString();
+			
+			
+			
+			String url = baseUrl+"comment.php?shop_id="+restId+"&user_id="+deviceId+"&grade="+myRate+"&comment="+myComment+"&flag=1";
+			new HttpTaskMyComment().execute(url);
+
+		}});
+		
+		
+				
 	}
 	
 	
@@ -522,16 +527,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
 		commentLayout = mInflater.inflate(R.layout.comment_layout, null);
-		//layout3 = mInflater.inflate(R.layout.layout3, null);
-		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
 		
+		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
+		//layout3 = mInflater.inflate(R.layout.layout3, null);
 
 		mListViews.add(infoLayout);
 		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
 		mListViews.add(commentLayout);
 		//mListViews.add(layout3);
-		//mListViews.add(myComment);
+		
 
 		myAdapter = new MyPagerAdapter();
 		myViewPager = (ViewPager) findViewById(R.id.viewpagerLayout);
@@ -637,26 +642,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	}
 
 	
-	
-	private void setMyComment() 
-	{
-		
-		Button newphotobtn = (Button) myCommentLayout.findViewById(R.id.newPhotobtn);
-		newphotobtn.setOnClickListener(new OnClickListener() {
-			int item,rating=0;
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				File tmpFile = new File(Environment.getExternalStorageDirectory(),"img"+item+"_"+rating+".jpg");
-				Uri outputFileUri = Uri.fromFile(tmpFile);
-				
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri); 
-				startActivityForResult(intent, 0); 
-			}
-		});
-	}
-	
+
 	@SuppressLint("NewApi")
 	private void setRestaurantInfo() {
 		
@@ -664,56 +650,72 @@ public class PagerActivity extends Activity implements LocationListener {
 		//if(splitRes.length > (resRank%numberOfResPerTime))
 		//{
 			splitInfo = splitRes[resRank%numberOfResPerTime].split("\t");
-			String []latlng = null;
-
-			if(splitInfo.length > 0)
-			{
-				restName = splitInfo[0];
-			}
-			if(splitInfo.length > 1)
-			{
-				imageFileURL = splitInfo[1]; // restaurant image url
-			}
-			if(splitInfo.length > 2)
-			{
-				restAddr = splitInfo[2]; // restaurant address
-			}
-			if(splitInfo.length > 3)
-			{
-				restTel = splitInfo[3]; // restaurant telephone number
-			}
-			if(splitInfo.length > 4)
-			{
-				restOpen = splitInfo[4]; // restaurant opening time
-				
-			}
-			if(splitInfo.length > 5)
-			{
-				restClosed = splitInfo[5]; // restaurant closed days
-			}
-			if(splitInfo.length > 6)
-			{
-				restWeb = splitInfo[6]; // restaurant web site
-			}
-			if(splitInfo.length > 7)
-			{
-				restDescription = splitInfo[7]; // restaurant price
-			}
-			if(splitInfo.length > 8)
-			{
-				restMenu = splitInfo[8];
-			}
-			if(splitInfo.length > 9)
-			{
-				latlng = splitInfo[9].split(",");
-				resLat = Double.parseDouble(latlng[0]);
-				resLng = Double.parseDouble(latlng[1]);
-			}
 			/*
 			TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-			//tmpTv.setText(latlng[0]+" "+latlng[1]+" "+resLat+"  "+resLng);
-			tmpTv.setText(restMenu);
+			tmpTv.setText( resRank+"    "+splitRes[resRank%numberOfResPerTime]);
 			*/
+			String []latlng = null;
+
+			if(splitRes[resRank%numberOfResPerTime].equals(""))
+			{
+				
+			}
+			else
+			{
+				if(splitInfo.length > 0)
+				{
+					restId = Integer.parseInt(splitInfo[0]);
+					
+					String url = baseUrl+"query_comment?shop_id="+restId;
+					new HttpTaskComment().execute(url);
+				}
+				if(splitInfo.length > 1)
+				{
+					restName = splitInfo[1];
+				}
+				if(splitInfo.length > 2)
+				{
+					imageFileURL = splitInfo[2]; // restaurant image url
+				}
+				if(splitInfo.length > 3)
+				{
+					restAddr = splitInfo[3]; // restaurant address
+				}
+				if(splitInfo.length > 4)
+				{
+					restTel = splitInfo[4]; // restaurant telephone number
+				}
+				if(splitInfo.length > 5)
+				{
+					restOpen = splitInfo[5]; // restaurant opening time
+				}
+				if(splitInfo.length > 6)
+				{
+					restClosed = splitInfo[6]; // restaurant closed days
+				}
+				if(splitInfo.length > 7)
+				{
+					restWeb = splitInfo[7]; // restaurant web site
+				}
+				if(splitInfo.length > 8)
+				{
+					restDescription = splitInfo[8]; // restaurant price
+				}
+				if(splitInfo.length > 9)
+				{
+					restMenu = splitInfo[9];
+				}
+				if(splitInfo.length > 10)
+				{
+					latlng = splitInfo[10].split(",");
+					if(latlng.length ==2)
+					{	
+						resLat = Double.parseDouble(latlng[0]);
+						resLng = Double.parseDouble(latlng[1]);
+					}
+				}
+			
+			}
 			
 			// set restaurant image
 			// imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
@@ -762,15 +764,7 @@ public class PagerActivity extends Activity implements LocationListener {
 					Intent ie = new Intent(Intent.ACTION_VIEW, Uri.parse(restWeb));
 					startActivity(ie);
 
-					/*
-					 * Intent intent = new Intent();
-					 * 
-					 * Bundle bundle = new Bundle(); bundle.putString("restWeb",
-					 * restWeb); intent.putExtras(bundle);
-					 * intent.setClass(PagerActivity.this, WebViewActivity.class);
-					 * startActivity(intent);
-					 */
-					// PagerActivity.this.finish();
+					
 				}
 			});
 
@@ -850,23 +844,43 @@ public class PagerActivity extends Activity implements LocationListener {
 	}
 	
 	private void setComment() {
-		String restComments = "fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;";
 		//restMenu = "nomenu";
-		
+		//restComments = "fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;";
+
 		LinearLayout ll2= (LinearLayout)commentLayout.findViewById(R.id.commentLayout);
 		ll2.removeAllViews();
 		
+		/*
+		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+		tmpTv.setText( restComments);
+		*/
 		
-		if (restComments != null && !restComments.equals(""))
+		String[] splitComments = null;
+		//restComments = "123\t456\t789";
+		splitComments = restComments.split("\t");
+		
+		
+		//tmpTv.append( "                      "+splitComments.length+" "+splitComments[0]);
+		
+		myComment = "";
+		myRate = 0;
+		setMyComment();
+		
+		for (int i = 0; i < splitComments.length-(splitComments.length%3); i=i+3) 
 		{
-			String[] splitComments = restComments.split(";");
-			for (int i = 0; i < splitComments.length; i++) {
-				String[] splitComemntItem = splitComments[i].split(":");
-				String id = splitComemntItem[0];
-				float star = Float.parseFloat(splitComemntItem[1]);
-				String comment = splitComemntItem[2];
-				
-				
+			String id = splitComments[i];
+			float star = Float.parseFloat(splitComments[i+1]);
+			String comment = splitComments[i+2];
+
+			if(id.equals(deviceId))
+			{
+				myComment = comment;
+				myRate = star;
+				setMyComment();
+			}
+			else
+			{
+
 				View view = View.inflate(PagerActivity.this,R.layout.comment_item_layout, null);
 				
 				TextView commentId = (TextView) view
@@ -881,18 +895,47 @@ public class PagerActivity extends Activity implements LocationListener {
 						.findViewById(R.id.commnentCommentTV);
 				commentCommenr.setText(comment);
 
-				//if(ll2!=null)
-				//{
 				ll2.addView(view);
-				
-				//}
 			}
 			
-			
+
 		}
 		
-
 	}
+	
+	
+	private void setMyComment()
+	{
+		
+		//alert(myComment+" "+myRate);
+		TextView tv = (TextView) myCommentLayout.findViewById(R.id.itemTitle);
+		tv.setText(restName);
+		
+		RatingBar bar = (RatingBar) myCommentLayout.findViewById(R.id.ratingBar1);
+		bar.setRating(myRate);
+		
+		EditText et = (EditText) myCommentLayout.findViewById(R.id.editText1);
+		et.setText(myComment);
+		
+		ImageView iv = (ImageView) myCommentLayout.findViewById(R.id.view1);
+		
+		File imgFile = new File(SDPATH+"whattoeat/"+restId+".jpg");
+		if(imgFile.exists()) {
+			
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = false;
+			options.inPreferredConfig = Config.RGB_565;
+			options.inSampleSize = 2;
+		    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),options);
+		    iv.setImageBitmap(myBitmap);
+		}
+		else
+		{
+			iv.setImageBitmap(null);
+		}
+		
+	}
+	
 	
 	public String getWebPage(String adresse) {
 
@@ -964,16 +1007,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		@Override
 		protected void onPostExecute(String response) {
 			// Log.i(LOG_THREAD_ACTIVITY, "HTTP RESPONSE" + response);
-
-			//TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-			//tmpTv.setText(response);
-			
+/*
+			TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+			tmpTv.setText(response);
+			*/
 			Log.d("emo",response);
 			//response = "No restaurant available";
 			
 			if (!response.equals("No restaurant available")) {
 
-				response = " \n \n \n ";
+				//response = " \n \n \n ";
 				splitRes = response.split("\n");
 				
 				
@@ -1024,8 +1067,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			 * **/
 			setMenu();
 				
-			setComment();
-			setMyComment();
+			
 			
 		}
 
@@ -1043,6 +1085,71 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	}
 
+	private class HttpTaskComment extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... urls) {
+			// TODO Auto-generated method stub
+			String response = getWebPage(urls[0]);
+			return response;
+		}
+
+		@Override
+		protected void onPostExecute(String response) {
+				
+			restComments = response;
+			
+			/*TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
+			tmpTv.setText( restComments);*/
+			
+			
+			setComment();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+
+	}
+	
+	private class HttpTaskMyComment extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... urls) {
+			// TODO Auto-generated method stub
+			String response = getWebPage(urls[0]);
+			return response;
+		}
+
+		@Override
+		protected void onPostExecute(String response) {
+				
+			
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			super.onProgressUpdate(values);
+		}
+
+	}
+	
+	
 	private class MyPagerAdapter extends PagerAdapter {
 
 		@Override
@@ -1244,6 +1351,34 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 	};
 
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK ) {
+			
+			ImageView iv = (ImageView) myCommentLayout.findViewById(R.id.view1);
+			
+			File imgFile = new File(SDPATH+"whattoeat/"+restId+".jpg");
+			if(imgFile.exists()) {
+				
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inJustDecodeBounds = false;
+				options.inPreferredConfig = Config.RGB_565;
+				options.inSampleSize = 2;
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),options);
+			    iv.setImageBitmap(myBitmap);
+			}
+			
+		} else if (resultCode == Activity.RESULT_CANCELED ) {
+			
+		}
+	}
+	
+	
+	
+	
+	
 	private OnClickListener fooditemclick = new OnClickListener() {
 
 		@Override
