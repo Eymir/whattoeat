@@ -109,7 +109,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	private String restComments = null;
 	
 	
-	//my commet
+	//my comment
 	private String myComment = null;
 	private float myRate = 0;
 	
@@ -126,7 +126,8 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	// google map settings
 	private GoogleMap map;
-
+	private Marker marker;
+	
 	// user info
 	private String deviceId;
 	private Double longitude;
@@ -511,7 +512,11 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 
 		LatLng latlng = new LatLng(resLat, resLng);
-		Marker marker = map.addMarker(new MarkerOptions().position(latlng)
+		if(marker!=null)
+		{
+			marker.remove();
+		}
+		marker = map.addMarker(new MarkerOptions().position(latlng)
 				.title(restName).snippet(restAddr));
 		marker.showInfoWindow();
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, scale));
@@ -1131,7 +1136,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 		@Override
 		protected void onPostExecute(String response) {
-				
+				//alert(response);
 			
 		}
 
