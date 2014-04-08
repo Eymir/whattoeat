@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.Menu;
 
 import java.io.File;
@@ -58,6 +60,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -924,6 +927,10 @@ public class PagerActivity extends Activity implements LocationListener {
 		
 		ImageView iv = (ImageView) myCommentLayout.findViewById(R.id.view1);
 		
+		iv.setOnClickListener(imageClick);
+		
+		
+		
 		File imgFile = new File(SDPATH+"whattoeat/"+restId+".jpg");
 		if(imgFile.exists()) {
 			
@@ -1402,6 +1409,64 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 	};
 
+	private OnClickListener imageClick = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+			
+			
+			/*
+			LayoutInflater inflater = LayoutInflater.from(PagerActivity.this);
+			View ivLayput = inflater.inflate(R.layout.image_layout,null);
+			AlertDialog.Builder builder = new AlertDialog.Builder(PagerActivity.this);
+			
+			builder.setTitle("請輸入偏好");
+			//builder.setMessage("請輸入使用者名稱：");
+			builder.setView(ivLayput);
+			AlertDialog dialog = builder.create();
+			dialog.show();
+			
+			*/
+			ImageView ivResource = (ImageView)v;
+			Bitmap bitmap = ((BitmapDrawable) ivResource.getDrawable()).getBitmap();
+			
+			LayoutInflater inflater = LayoutInflater.from(PagerActivity.this);
+			View ivLayput = inflater.inflate(R.layout.image_layout,null);
+			((ImageView)ivLayput.findViewById(R.id.imageLayoutUV)).setImageBitmap(bitmap);
+			
+			new AlertDialog.Builder(PagerActivity.this)
+			//.setTitle("123")
+			.setView(ivLayput)
+			.setPositiveButton("確定",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int which) {
+							
+							// continue with delete
+						}
+					}).show();
+			
+			/*
+			ImageView ivResource = (ImageView)v;
+			
+			//ivResource.getima
+			//(BitmapDrawable)ivResourceBitmapDrawable bd;
+			Bitmap bitmap = ((BitmapDrawable) ivResource.getDrawable()).getBitmap();
+			
+			ImageView iv = (ImageView)findViewById(R.id.imageLayoutUV);
+			iv.setImageBitmap(bitmap);
+				
+			Dialog settingsDialog = new Dialog(PagerActivity.this);
+			settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.image_layout , null));
+			settingsDialog.show();*/
+			
+		}
+	};
+	
+	
 	@Override
 	public void onLocationChanged(Location arg0) {
 		// TODO Auto-generated method stub
