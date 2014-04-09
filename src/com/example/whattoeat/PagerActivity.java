@@ -12,8 +12,6 @@ import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -60,7 +58,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -86,6 +83,10 @@ public class PagerActivity extends Activity implements LocationListener {
 	private View commentLayout = null;
 	private View myCommentLayout = null;
 	
+	//comment pager
+	private List<View>	commentListViews;// = new ArrayList<View>();;
+	private CommentPagerAdapter commentAdapter;
+	private WrapContentHeightViewPager commentViewPager;
 	
 	// server
 	//private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
@@ -532,16 +533,16 @@ public class PagerActivity extends Activity implements LocationListener {
 		mListViews = new ArrayList<View>();
 		mInflater = getLayoutInflater();
 		infoLayout = mInflater.inflate(R.layout.activity_restaurunt, null);
-		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		mapLayout = mInflater.inflate(R.layout.activity_map, null);
+		menuLayout = mInflater.inflate(R.layout.menu_layout, null);
 		commentLayout = mInflater.inflate(R.layout.comment_layout, null);
 		
 		myCommentLayout = mInflater.inflate(R.layout.activity_item, null);
 		//layout3 = mInflater.inflate(R.layout.layout3, null);
 
 		mListViews.add(infoLayout);
-		mListViews.add(menuLayout);
 		mListViews.add(mapLayout);
+		mListViews.add(menuLayout);
 		mListViews.add(commentLayout);
 		//mListViews.add(layout3);
 		
@@ -600,10 +601,10 @@ public class PagerActivity extends Activity implements LocationListener {
 					tv = (TextView) findViewById(R.id.infoTV);
 				}
 				if (arg0 == 1) {
-					tv = (TextView) findViewById(R.id.menuTV);
+					tv = (TextView) findViewById(R.id.mapTV);
 				}
 				if (arg0 == 2) {
-					tv = (TextView) findViewById(R.id.mapTV);
+					tv = (TextView) findViewById(R.id.menuTV);
 				}
 				if (arg0 == 3) {
 					tv = (TextView) findViewById(R.id.commentTV);
@@ -648,12 +649,36 @@ public class PagerActivity extends Activity implements LocationListener {
 
 
 	}
-
+	
+	private void setImages()
+	{
+		String imageList = "http://msnews.n.yam.com/photo_data/20081208006101/XL20081208006101_16739.jpg\thttp://1.bp.blogspot.com/_TAhvZJmWSg8/S_puf5a9q9I/AAAAAAAAAMk/zAR_X8nIDaE/s1600/%E9%8D%8B%E7%87%92%E6%84%8F%E9%BA%B5.jpg\thttp://cheap.tw.tranews.com/Show/images/News/3225591_1.jpg";
+		String []images = imageList.split("\t");
+		
+		LinearLayout ll2= (LinearLayout)infoLayout.findViewById(R.id.imageHSVLL);
+		ll2.removeAllViews();
+		
+		for(int i =0;i<images.length;i++)
+		{
+			imageFileURL = images[i];
+			alert(imageFileURL);
+			/*
+			ImageView restIVs = (ImageView)findViewById(R.id.imageLayoutIV);
+			UrlImageViewHelper.setUrlDrawable(restIVs, imageFileURL);
+			ll2.addView(restIVs);*/
+		}
+		/*
+		ImageView restIV = (ImageView) infoLayout
+				.findViewById(R.id.restaurantImgView);
+		UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
+		*/
+		
+	}
 	
 
 	@SuppressLint("NewApi")
 	private void setRestaurantInfo() {
-		
+		setImages();
 		String[] splitInfo = null;
 		//if(splitRes.length > (resRank%numberOfResPerTime))
 		//{
@@ -726,7 +751,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			}
 			
 			// set restaurant image
-			// imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
+			//imageFileURL = "http://pic.pimg.tw/bunnylinn/4bf0b91869bd0.jpg";
 			ImageView restIV = (ImageView) infoLayout
 					.findViewById(R.id.restaurantImgView);
 			UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
@@ -851,24 +876,23 @@ public class PagerActivity extends Activity implements LocationListener {
 		
 	}
 	
+	
+
+	
 	private void setComment() {
-		//restMenu = "nomenu";
-		//restComments = "fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;fish:5:asdasdasdasd;fish2:4:aaa;fish:1:ㄎㄎd;";
+		commentListViews = new ArrayList<View>();
+		restComments = "fish\t5\tasdasdasdaddddddddddddddddddddddddddddddddddddddddddddddddsddddsddddsddddsddddsd\tfish2\t4\taaa\tfish\t1\tㄎㄎd\tfish\t5\tasdasdasdasd";
 
 		LinearLayout ll2= (LinearLayout)commentLayout.findViewById(R.id.commentLayout);
 		ll2.removeAllViews();
 		
-		/*
-		TextView tmpTv = (TextView) layout3.findViewById(R.id.textViewP3);
-		tmpTv.setText( restComments);
-		*/
+		//LinearLayout ll2= (LinearLayout)infoLayout.findViewById(R.id.commentHSVLL);
+		//ll2.removeAllViews();
+		
 		
 		String[] splitComments = null;
-		//restComments = "123\t456\t789";
 		splitComments = restComments.split("\t");
-		
-		
-		//tmpTv.append( "                      "+splitComments.length+" "+splitComments[0]);
+
 		
 		myComment = "";
 		myRate = 0;
@@ -903,11 +927,38 @@ public class PagerActivity extends Activity implements LocationListener {
 						.findViewById(R.id.commnentCommentTV);
 				commentCommenr.setText(comment);
 
-				ll2.addView(view);
+				commentListViews.add(view);
+				//ll2.addView(view);
 			}
 			
 
 		}
+		
+		
+		if(commentListViews.size()==0)
+		{
+			View view = View.inflate(PagerActivity.this,R.layout.comment_item_layout, null);
+			
+			TextView commentId = (TextView) view
+					.findViewById(R.id.commentIdTV);
+			commentId.setText("System");
+			
+			RatingBar rb = (RatingBar) view.findViewById(R.id.commentRatingBar);
+			rb.setRating(0);
+			rb.setEnabled(false);
+			
+			TextView commentCommenr = (TextView) view
+					.findViewById(R.id.commnentCommentTV);
+			commentCommenr.setText("此餐廳尚未有評論喔!!");
+			
+			commentListViews.add(view);
+		}
+
+		
+		
+		commentAdapter = new CommentPagerAdapter();
+		WrapContentHeightViewPager commentViewPager = (WrapContentHeightViewPager) findViewById(R.id.commentViewPager);
+		commentViewPager.setAdapter(commentAdapter);
 		
 	}
 	
@@ -1161,7 +1212,55 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	}
 	
-	
+	private class CommentPagerAdapter extends PagerAdapter {
+
+		@Override
+		public void destroyItem(View arg0, int arg1, Object arg2) {
+			Log.d("k", "destroyItem");
+			((ViewPager) arg0).removeView(commentListViews.get(arg1));
+		}
+
+		@Override
+		public void finishUpdate(View arg0) {
+			Log.d("k", "finishUpdate");
+		}
+
+		@Override
+		public int getCount() {
+			Log.d("k", "getCount");
+			return commentListViews.size();
+		}
+		
+		@Override
+		public Object instantiateItem(View arg0, int arg1) {
+			Log.d("k", "instantiateItem");
+			((ViewPager) arg0).addView(commentListViews.get(arg1), 0);
+			return commentListViews.get(arg1);
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			Log.d("k", "isViewFromObject");
+			return arg0 == (arg1);
+		}
+
+		@Override
+		public void restoreState(Parcelable arg0, ClassLoader arg1) {
+			Log.d("k", "restoreState");
+		}
+
+		@Override
+		public Parcelable saveState() {
+			Log.d("k", "saveState");
+			return null;
+		}
+
+		@Override
+		public void startUpdate(View arg0) {
+			Log.d("k", "startUpdate");
+		}
+
+	}
 	private class MyPagerAdapter extends PagerAdapter {
 
 		@Override
@@ -1238,10 +1337,10 @@ public class PagerActivity extends Activity implements LocationListener {
 			case R.id.infoTV:
 				myViewPager.setCurrentItem(0);
 				break;
-			case R.id.menuTV:
+			case R.id.mapTV:
 				myViewPager.setCurrentItem(1);
 				break;
-			case R.id.mapTV:
+			case R.id.menuTV:
 				myViewPager.setCurrentItem(2);
 				break;
 			case R.id.commentTV:
@@ -1434,7 +1533,7 @@ public class PagerActivity extends Activity implements LocationListener {
 			
 			LayoutInflater inflater = LayoutInflater.from(PagerActivity.this);
 			View ivLayput = inflater.inflate(R.layout.image_layout,null);
-			((ImageView)ivLayput.findViewById(R.id.imageLayoutUV)).setImageBitmap(bitmap);
+			((ImageView)ivLayput.findViewById(R.id.imageLayoutIV)).setImageBitmap(bitmap);
 			
 			new AlertDialog.Builder(PagerActivity.this)
 			//.setTitle("123")
