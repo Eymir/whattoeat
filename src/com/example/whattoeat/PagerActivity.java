@@ -661,8 +661,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		for(int i =0;i<images.length;i++)
 		{
 			imageFileURL = images[i];
-			//alert(imageFileURL);
-			
+			//alert(imageFileURL);			
 			/*
 			ImageView restIVs = (ImageView)findViewById(R.id.imageLayoutIV);
 			UrlImageViewHelper.setUrlDrawable(restIVs, imageFileURL);
