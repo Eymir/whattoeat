@@ -88,6 +88,11 @@ public class PagerActivity extends Activity implements LocationListener {
 	private CommentPagerAdapter commentAdapter;
 	private WrapContentHeightViewPager commentViewPager;
 	
+	//image pager
+	private List<View>	imageListViews;// = new ArrayList<View>();;
+	private ImagePagerAdapter imageAdapter;
+	private WrapContentHeightViewPager imageViewPager;
+	
 	// server
 	//private String baseUrl ="http://myweb.ncku.edu.tw/~p96024061/testAndroid/index.php?";
 	//private String baseUrl = "http://192.168.1.116/wteSuggest.php?";
@@ -652,6 +657,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	
 	private void setImages()
 	{
+		imageListViews = new ArrayList<View>();
 		String imageList = "http://msnews.n.yam.com/photo_data/20081208006101/XL20081208006101_16739.jpg\thttp://1.bp.blogspot.com/_TAhvZJmWSg8/S_puf5a9q9I/AAAAAAAAAMk/zAR_X8nIDaE/s1600/%E9%8D%8B%E7%87%92%E6%84%8F%E9%BA%B5.jpg\thttp://cheap.tw.tranews.com/Show/images/News/3225591_1.jpg";
 		String []images = imageList.split("\t");
 		
@@ -662,17 +668,43 @@ public class PagerActivity extends Activity implements LocationListener {
 		{
 			imageFileURL = images[i];
 			//alert(imageFileURL);			
+			//ImageView restIVs = (ImageView)View.inflate(PagerActivity.this,R.id.imageLayoutIV, null);
+			
+			View view = View.inflate(PagerActivity.this,R.layout.image_layout_constrant, null);
+			
+			ImageView restIVs = (ImageView) view
+					.findViewById(R.id.imageLayoutConstrantIV);
+			//restIVs.set
+			
 			/*
-			ImageView restIVs = (ImageView)findViewById(R.id.imageLayoutIV);
+			if(restIVs==null)
+			{alert("!!");}
+			*/
 			UrlImageViewHelper.setUrlDrawable(restIVs, imageFileURL);
-			ll2.addView(restIVs);*/
+			ll2.addView(view);
+			//imageListViews.add(view);
 		}
+		
 		/*
 		ImageView restIV = (ImageView) infoLayout
 				.findViewById(R.id.restaurantImgView);
 		UrlImageViewHelper.setUrlDrawable(restIV, imageFileURL);
 		*/
 		
+		/*
+		if(imageListViews.size()==0)
+		{
+			View view = View.inflate(PagerActivity.this,R.layout.image_layout_constrant, null);
+			ImageView restIVs = (ImageView) view
+					.findViewById(R.id.imageLayoutConstrantIV);
+			
+			commentListViews.add(view);
+		}
+
+		imageAdapter = new ImagePagerAdapter();
+		imageViewPager = (WrapContentHeightViewPager) findViewById(R.id.imageViewPager);
+		imageViewPager.setAdapter(imageAdapter);
+	*/	
 	}
 	
 
@@ -881,7 +913,7 @@ public class PagerActivity extends Activity implements LocationListener {
 	
 	private void setComment() {
 		commentListViews = new ArrayList<View>();
-		restComments = "fish\t5\tasdasdasdaddddddddddddddddddddddddddddddddddddddddddddddddsddddsddddsddddsddddsd\tfish2\t4\taaa\tfish\t1\t£}£}d\tfish\t5\tasdasdasdasd";
+		//restComments = "fish\t5\tasdasdasdaddddddddddddddddddddddddddddddddddddddddddddddddsddddsddddsddddsddddsd\tfish2\t4\taaa\tfish\t1\t£}£}d\tfish\t5\tasdasdasdasd";
 
 		LinearLayout ll2= (LinearLayout)commentLayout.findViewById(R.id.commentLayout);
 		ll2.removeAllViews();
@@ -957,7 +989,7 @@ public class PagerActivity extends Activity implements LocationListener {
 		
 		
 		commentAdapter = new CommentPagerAdapter();
-		WrapContentHeightViewPager commentViewPager = (WrapContentHeightViewPager) findViewById(R.id.commentViewPager);
+		commentViewPager = (WrapContentHeightViewPager) findViewById(R.id.commentViewPager);
 		commentViewPager.setAdapter(commentAdapter);
 		
 	}
@@ -1211,7 +1243,55 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 
 	}
-	
+	private class ImagePagerAdapter extends PagerAdapter {
+
+		@Override
+		public void destroyItem(View arg0, int arg1, Object arg2) {
+			Log.d("k", "destroyItem");
+			((ViewPager) arg0).removeView(imageListViews.get(arg1));
+		}
+
+		@Override
+		public void finishUpdate(View arg0) {
+			Log.d("k", "finishUpdate");
+		}
+
+		@Override
+		public int getCount() {
+			Log.d("k", "getCount");
+			return imageListViews.size();
+		}
+		
+		@Override
+		public Object instantiateItem(View arg0, int arg1) {
+			Log.d("k", "instantiateItem");
+			((ViewPager) arg0).addView(imageListViews.get(arg1), 0);
+			return imageListViews.get(arg1);
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			Log.d("k", "isViewFromObject");
+			return arg0 == (arg1);
+		}
+
+		@Override
+		public void restoreState(Parcelable arg0, ClassLoader arg1) {
+			Log.d("k", "restoreState");
+		}
+
+		@Override
+		public Parcelable saveState() {
+			Log.d("k", "saveState");
+			return null;
+		}
+
+		@Override
+		public void startUpdate(View arg0) {
+			Log.d("k", "startUpdate");
+		}
+
+	}
 	private class CommentPagerAdapter extends PagerAdapter {
 
 		@Override

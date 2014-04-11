@@ -15,13 +15,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="id"
-        android:background="@drawable/border_corner"
-        android:textColor = "#FFFFFF"
+        android:textColor = "#ff9801"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
      <RatingBar
             android:id="@+id/commentRatingBar"
-            style="android:attr/ratingBarStyleMedium"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
