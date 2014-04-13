@@ -1,27 +1,6 @@
 package com.example.whattoeat;
 
 
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.BitmapDrawable;
-import android.view.Menu;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,25 +18,48 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+
+
+
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -66,7 +68,14 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.provider.MediaStore;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 
 @SuppressLint("NewApi")
@@ -164,7 +173,7 @@ public class PagerActivity extends Activity implements LocationListener {
 				lastRes = bundle.getString("lastRes");
 			}
 		}
-
+//
 		db = helper.getWritableDatabase();*/
 		mealItem = new ArrayList<String>();
 				
@@ -364,6 +373,19 @@ public class PagerActivity extends Activity implements LocationListener {
 		@Override
 		public void onClick(View v) 
 		{
+			
+			
+			/*
+			LinearLayout ll2= (LinearLayout)infoLayout.findViewById(R.id.imageHSVLL);
+			
+			
+			View vie2 = ll2.getChildAt(0);
+			//TextView itemCount = (TextView) itemView.findViewById(R.id.menuItemNumber);
+			
+			ImageView restIVs2 = (ImageView) ll2.findViewById(R.id.imageLayoutConstrantIV);
+			alert(restIVs2.getHeight()+" "+restIVs2.getWidth());
+			*/
+			
 			
 			TextView tv = (TextView) findViewById(R.id.myCommentTV);
 			tv.setVisibility(View.VISIBLE);
@@ -674,15 +696,12 @@ public class PagerActivity extends Activity implements LocationListener {
 			
 			ImageView restIVs = (ImageView) view
 					.findViewById(R.id.imageLayoutConstrantIV);
-			//restIVs.set
-			
-			/*
-			if(restIVs==null)
-			{alert("!!");}
-			*/
 			UrlImageViewHelper.setUrlDrawable(restIVs, imageFileURL);
+
+			restIVs.setOnClickListener(imageClick);
 			ll2.addView(view);
-			//imageListViews.add(view);
+			
+		
 		}
 		
 		/*
@@ -912,6 +931,10 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	
 	private void setComment() {
+		commentViewPager = (WrapContentHeightViewPager) infoLayout.findViewById(R.id.commentViewPager);
+		commentViewPager.setAdapter(null);
+		//commentAdapter.
+		//commentAdapter = new CommentPagerAdapter();
 		commentListViews = new ArrayList<View>();
 		//restComments = "fish\t5\tasdasdasdaddddddddddddddddddddddddddddddddddddddddddddddddsddddsddddsddddsddddsd\tfish2\t4\taaa\tfish\t1\t£}£}d\tfish\t5\tasdasdasdasd";
 
@@ -987,10 +1010,10 @@ public class PagerActivity extends Activity implements LocationListener {
 		}
 
 		
-		
 		commentAdapter = new CommentPagerAdapter();
-		commentViewPager = (WrapContentHeightViewPager) findViewById(R.id.commentViewPager);
+		
 		commentViewPager.setAdapter(commentAdapter);
+		
 		
 	}
 	
@@ -1590,6 +1613,7 @@ public class PagerActivity extends Activity implements LocationListener {
 
 	private OnClickListener imageClick = new OnClickListener() {
 
+
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
@@ -1610,38 +1634,20 @@ public class PagerActivity extends Activity implements LocationListener {
 			*/
 			ImageView ivResource = (ImageView)v;
 			Bitmap bitmap = ((BitmapDrawable) ivResource.getDrawable()).getBitmap();
-			
-			LayoutInflater inflater = LayoutInflater.from(PagerActivity.this);
-			View ivLayput = inflater.inflate(R.layout.image_layout,null);
-			((ImageView)ivLayput.findViewById(R.id.imageLayoutIV)).setImageBitmap(bitmap);
-			
-			new AlertDialog.Builder(PagerActivity.this)
-			//.setTitle("123")
-			.setView(ivLayput)
-			.setPositiveButton("½T©w",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int which) {
-							
-							// continue with delete
-						}
-					}).show();
-			
-			/*
-			ImageView ivResource = (ImageView)v;
-			
-			//ivResource.getima
-			//(BitmapDrawable)ivResourceBitmapDrawable bd;
-			Bitmap bitmap = ((BitmapDrawable) ivResource.getDrawable()).getBitmap();
-			
-			ImageView iv = (ImageView)findViewById(R.id.imageLayoutUV);
-			iv.setImageBitmap(bitmap);
+
+			if(bitmap!=null)
+			{
+				LayoutInflater inflater = LayoutInflater.from(PagerActivity.this);
+				View ivLayput = inflater.inflate(R.layout.image_layout,null);
+				ImageView iv = (ImageView)ivLayput.findViewById(R.id.imageLayoutIV);
+				iv.setImageBitmap(bitmap);
 				
-			Dialog settingsDialog = new Dialog(PagerActivity.this);
-			settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-			settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.image_layout , null));
-			settingsDialog.show();*/
-			
+			    Dialog d = new Dialog(PagerActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen); 
+			    d.setContentView(ivLayput);
+			    d.show();
+	
+				
+			}
 		}
 	};
 	
@@ -1680,6 +1686,11 @@ public class PagerActivity extends Activity implements LocationListener {
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 		// TODO Auto-generated method stub
 
+	}
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 }
 

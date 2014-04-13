@@ -7,9 +7,10 @@
 
     <ImageView
         android:id="@+id/imageLayoutConstrantIV"
-        
+        android:maxHeight="200dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:background="@drawable/border"/>
+        android:adjustViewBounds="true"
+        />
 
 </RelativeLayout>

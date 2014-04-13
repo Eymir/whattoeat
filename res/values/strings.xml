@@ -10,5 +10,4 @@
     <string name="title_activity_pager">PagerActivity</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="title_activity_map">MapActivity1</string>
-
 </resources>
